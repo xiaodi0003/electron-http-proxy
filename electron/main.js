@@ -1,30 +1,34 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const process = require('child_process');
-const systemShell = require('./server/systemShell');
-const server = require('./server/index.js');
-const portIsOccupied = require('./server/port.js');
-const {addWindow, removeWindow} = require('./server/messageBus.js');
+const url = require('url');
+const childProcess = require('child_process');
+const systemShell = require('./systemShell');
+const server = require('./server.js');
+const portIsOccupied = require('./port.js');
+const {addWindow, removeWindow} = require('./messageBus.js');
 
 const serverPort = 8000;
 
 function createWindow() {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  const startUrl = process.env.PORT ? `http://localhost:${process.env.PORT}/` : url.format({
+    pathname: path.join(__dirname, '../build/index.html'),
+    protocol: 'file:',
+    slashes: true,
+  });
+
+  const mainWindow = new BrowserWindow({ 
     width: 1366,
     height: 800,
     webPreferences: {
-      preload: path.join(__dirname, 'static/preload.js'),
+      // preload: path.join(__dirname, '../static/preload.js'),
       /* 禁用webpage的require检查 */
       nodeIntegration: true,
       // 只应该在dev模式为false
       webSecurity: true
-    },
+    }
   });
-
-  // and load the index.html of the app.
-  mainWindow.loadFile('./static/index.html');
+  mainWindow.loadURL(startUrl);
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
@@ -57,7 +61,7 @@ app.whenReady().then(async () => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
+  if (childProcess.platform !== 'darwin') app.quit();
 });
 
 /* 程序退出时关掉系统代理 */

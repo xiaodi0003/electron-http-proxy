@@ -1,5 +1,5 @@
-import {sendElectronMessage } from '../../messageBus';
 import { ProxySetting } from '@/models/connect';
+import {sendElectronMessage } from '../../electron.js';
 
 export async function getProxySettings() {
   return sendElectronMessage({channel: 'getProxySettings'});

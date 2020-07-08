@@ -6,24 +6,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (element) element.innerText = text
   }
 
-  for (const type of ['chrome', 'node', 'electron']) {
-    replaceText(`${type}-version`, process.versions[type])
-  }
-
-  // loadPageUrls();
+  ['chrome', 'node', 'electron'].forEach(type => {
+    replaceText(`${type}-version`, process.versions[type]);
+  });
 });
-
-function loadPageUrls() {
-  function loadScript(url) {
-    let script = document.createElement('script');
-    let port = process.env.PORT || 3000;
-  
-    script.async = '';
-    script.src = `http://localhost:${port}${url}`;
-  
-    document.body.appendChild(script);
-  }
-  loadScript('/static/js/bundle.js');
-  loadScript('/static/js/0.chunk.js');
-  loadScript('/static/js/main.chunk.js');
-}

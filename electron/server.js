@@ -1,5 +1,5 @@
 const httpProxy = require('http-proxy');
-var bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 const express = require('express');
 const {serverMessage} = require('./messageBus.js');
 const responseParser = require('./responseParser.js');
@@ -40,6 +40,22 @@ function sendRes(req, res, body, err) {
   });
 }
 
+// todo 这里把body填上
+function sendExpressRes(req, res, body, err) {
+  const [httpVersion, statusCode, statusMessage] = res._header.split('\n')[0].split(' ');
+  serverMessage('res', {
+    id: req.id,
+    res: {
+      httpVersion: httpVersion.replace(/.*\//, ''),
+      headers: res._header.split('\n').slice(1).map(h => h.split(': ')).filter(h => h.length === 2).reduce((l, n) => ({...l, [n[0]]: n[1]}), {}),
+      statusCode,
+      statusMessage,
+      body,
+      err
+    }
+  });
+}
+
 const proxy = httpProxy.createProxyServer({});
 
 proxy.on('error', (err, req, res) => {
@@ -67,8 +83,10 @@ app.use(bodyParser.text({ type: () => true }));
 
 app.use(function (req, res, next) { /* 表示匹配任何路由 */
   getReq(req);
-  res.on('finish', () => {
-    // getRes(res, req);
+  res.on('close', () => {
+    if (req.fileProtocol) {
+      sendExpressRes(req, res);
+    }
   });
   console.log(req.url);
   // proxy.web(req, res, { target: req.url.replace(/(https?:\/\/[^/]*).*/, '$1') });

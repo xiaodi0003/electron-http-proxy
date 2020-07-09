@@ -56,21 +56,22 @@ const HttpList: React.FC<{global: GlobalModelState}> = ({
       title: '操作',
       key: 'operation',
       dataIndex: 'operation',
-      width: 80,
+      width: 150,
       className: 'operations',
       render: (text: string, setting: ProxySetting) => <>
         <a onClick={() => setNowSetting(setting)}>Edit</a>
         <a onClick={() => deleteProxySetting(setting)}>Delete</a>
+        <a onClick={() => setNowSetting({...setting, id: undefined})}>Copy</a>
       </>
     }
   ];
 
-  console.log('proxySettings', proxySettings);
   return (
     <PageHeaderWrapper>
       <Table
         rowKey='id'
         columns={columns}
+        rowClassName={record => record.enabled ? '' : 'disabled'}
         dataSource={proxySettings}
         pagination={false}
         className='dynamicproxy'

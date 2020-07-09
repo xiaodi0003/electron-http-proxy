@@ -1,9 +1,9 @@
-import { Form, Modal, Input, Select, Radio } from 'antd';
+import { Form, Modal, Input, Select, Radio, Switch } from 'antd';
 import React, { useState } from 'react';
 import { ProxySetting } from '@/models/connect';
 import './index.less';
 
-const Option = Select.Option;
+const {Option} = Select;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
@@ -24,8 +24,9 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
   nowSetting.type = nowSetting.type || 'exact';
   nowSetting.from = nowSetting.from || 'http://';
   nowSetting.to = nowSetting.to || 'http://';
+  nowSetting.enabled = nowSetting.enabled !== false;
 
-  const {type, from, to} = nowSetting;
+  const {type, from, to, enabled} = nowSetting;
   const [form] = Form.useForm();
 
   const setSetting = (s: object) => setNowSetting({...nowSetting, ...s});
@@ -71,21 +72,28 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
     >
       <Form {...formItemLayout} form={form} onFinish={onFinish}>
         <FormItem
+          label='启用'
+          name='enabled'
+          valuePropName='checked'
+          initialValue={enabled}
+        >
+          <Switch onChange={checked => {
+            form.setFieldsValue({enabled: checked});
+            setSetting({enabled: checked});
+          }} />
+        </FormItem>
+        <FormItem
           label='配置类型'
           name='type'
-          rules={[{
-            required: true,
-            message: '必选'
-          }]}
           initialValue={type}
         >
           <RadioGroup onChange={({target: {value}}) => {
             form.setFieldsValue({type: value});
             setSetting({type: value});
           }}>
-            <Radio value={'exact'}>Exact</Radio>
-            <Radio value={'prefix'}>Prefix</Radio>
-            <Radio value={'regex'}>Regex</Radio>
+            <Radio value="exact">Exact</Radio>
+            <Radio value="prefix">Prefix</Radio>
+            <Radio value="regex">Regex</Radio>
           </RadioGroup>
         </FormItem>
         <FormItem
@@ -99,7 +107,7 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
         >
           <Input
             addonBefore={selectFromProtocol}
-            addonAfter={'Test'}
+            addonAfter="Test"
             onChange={({target: {value}}) => setFromToForm(value, 'from', from)}
           />
         </FormItem>

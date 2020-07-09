@@ -1,8 +1,8 @@
 {
-  "name": "ant-design-pro",
+  "name": "electron-http-proxy",
   "version": "0.1.0",
   "private": true,
-  "description": "An out-of-box UI solution for enterprise applications",
+  "description": "HTTP proxyer and capturer",
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
     "build": "umi build",
@@ -31,7 +31,7 @@
     "test:all": "node ./tests/run-tests.js",
     "test:component": "umi test ./src/components",
     "tsc": "tsc",
-    "start-electron": "export PORT=8001 && electron .",
+    "start-electron": "export PORT=8001 && electron . --inspect=5858",
     "start-all": "npm run start & npm run start-electron",
     "package": "electron-builder build --mac --publish never",
     "build-package": "npm run build && npm run package"

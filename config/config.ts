@@ -78,4 +78,7 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
+  devServer: {
+    port: 8001
+  }
 });

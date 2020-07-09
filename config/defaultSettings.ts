@@ -16,7 +16,7 @@ const proSettings: DefaultSettings = {
   menu: {
     locale: true,
   },
-  title: 'HTTP Proxy',
+  title: 'Proxy',
   pwa: false,
   iconfontUrl: '',
 };

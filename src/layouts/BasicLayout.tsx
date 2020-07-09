@@ -16,6 +16,7 @@ import RightContent from '@/components/GlobalHeader/RightContent';
 import { ConnectState } from '@/models/connect';
 import { handleElectronMessage } from '../electron.js';
 import logo from '../assets/logo.svg';
+import './index.less';
 
 export interface BasicLayoutProps extends ProLayoutProps {
   breadcrumbNameMap: {
@@ -115,7 +116,7 @@ const BasicLayout: React.FC<BasicLayoutProps> = (props) => {
       formatMessage={formatMessage}
       menuHeaderRender={(logoDom, titleDom) => (
         <Link to="/">
-          {false && logoDom}
+          {logoDom}
           {titleDom}
         </Link>
       )}

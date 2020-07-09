@@ -1,10 +1,12 @@
 const pSettings = require('./proxySettings.js');
 
 exports.proxy = function(req, res, proxy) {
-  const setting = pSettings.getProxySettings().find(s => findSetting(s, req));
+  const setting = pSettings.getProxySettings().filter(s => s.enabled).find(s => findSetting(s, req));
   if (setting) {
     const target = getTarget(setting, req);
     exeProxy(target, req, res, proxy);
+  } else {
+    exeProxy(req.url, req, res, proxy);
   }
 }
 
@@ -51,8 +53,10 @@ function getTarget(setting, req) {
 // todo 对于file协议，需要把结果发到页面抓包
 function exeProxy(target, req, res, proxy) {
   if (target.startsWith('file://')) {
+    req.fileProtocol = true;
     res.sendFile(target.replace('file://', '/').replace(/\?.*/, ''));
   } else {
+    req.url = target;
     proxy.web(req, res, { target: req.url.replace(/(https?:\/\/[^/]*).*/, '$1') });
   }
 }

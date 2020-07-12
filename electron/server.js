@@ -1,5 +1,7 @@
+// 不用express-http-proxy是因为它无法创建动态代理，只能预先指定代理的target
 const httpProxy = require('http-proxy');
 const bodyParser = require('body-parser');
+// 用express是为了实现bodyParser
 const express = require('express');
 const {serverMessage} = require('./messageBus.js');
 const responseParser = require('./responseParser.js');

@@ -1,6 +1,5 @@
 import { Table, Button } from 'antd';
 import React, { useState, useEffect } from 'react';
-import { PageHeaderWrapper } from '@ant-design/pro-layout';
 import { connect } from 'umi';
 import { ConnectState, GlobalModelState, ProxySetting } from '@/models/connect';
 import SettingDetail from './SettingDetail';
@@ -62,12 +61,13 @@ const HttpList: React.FC<{global: GlobalModelState}> = ({
         <a onClick={() => setNowSetting(setting)}>Edit</a>
         <a onClick={() => deleteProxySetting(setting)}>Delete</a>
         <a onClick={() => setNowSetting({...setting, id: undefined})}>Copy</a>
+        <a onClick={() => onSave({...setting, enabled: !setting.enabled})}>{setting.enabled ? 'Disable' : 'Enable'}</a>
       </>
     }
   ];
 
   return (
-    <PageHeaderWrapper>
+    <>
       <Table
         rowKey='id'
         columns={columns}
@@ -79,7 +79,7 @@ const HttpList: React.FC<{global: GlobalModelState}> = ({
       />
       <Button type='primary' onClick={() => setNowSetting({})}>Add</Button>
       {nowSetting && <SettingDetail setting={nowSetting} onOk={onSave} />}
-    </PageHeaderWrapper>
+    </>
   );
 };
 

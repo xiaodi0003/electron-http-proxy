@@ -5,6 +5,7 @@ import { HttpPackage } from '@/models/connect';
 import './index.less';
 
 const TabPane = Tabs.TabPane;
+const contentType = 'Content-Type';
 
 function getBodyStr(req: any) {
   if (!req || !req.body) {
@@ -14,7 +15,7 @@ function getBodyStr(req: any) {
 }
 
 function isJson(req: any) {
-  return req?.headers && req.headers['content-type'] && req.headers['content-type'].includes('json');
+  return req?.headers && req.headers[contentType] && req.headers[contentType].toLowerCase().includes('json');
 }
 
 const HttpPackageDetail: React.FC<{detail: HttpPackage | null; onOk: () => void; getPath: any}> = ({
@@ -58,13 +59,13 @@ const HttpPackageDetail: React.FC<{detail: HttpPackage | null; onOk: () => void;
   function getBodyJson(jsonData) {
     let src = '';
     try {
-      src = jsonData.split ? jsonData : JSON.parse(jsonData)
+      src = jsonData.split ? JSON.parse(jsonData) : jsonData
     } catch (error) {
       console.error(error);
     }
     return (
       <div className='httpbody'>
-        <ReactJson src={src} />
+        {src ? <ReactJson src={src} /> : null}
       </div>
     );
   }
@@ -88,7 +89,7 @@ const HttpPackageDetail: React.FC<{detail: HttpPackage | null; onOk: () => void;
             <TabPane tab='Request' key='request'>{getRequest()}</TabPane>
             <TabPane tab='Header' key='header'>{getHeader(req)}</TabPane>
             {isGet() || <TabPane tab='Body' key='body'>{getReqBody(getBodyStr(req))}</TabPane>}
-            {isJson(req) && <TabPane tab='JSON Body' key='json'>{getBodyJson(req.body)}</TabPane>}
+            {!isGet() && isJson(req) && <TabPane tab='JSON Body' key='json'>{getBodyJson(req.body)}</TabPane>}
           </Tabs>
         </div>
       </>

@@ -23,11 +23,16 @@ export interface ProxySetting {
   to: string
 }
 
+export interface HttpListConfig {
+  stoped: boolean
+}
+
 export interface GlobalModelState {
   collapsed: boolean;
   notices: NoticeItem[];
   httpPackages?: HttpPackage[];
   proxySettings: ProxySetting[];
+  httpListConfig: HttpListConfig
 }
 
 export interface GlobalModelType {
@@ -54,7 +59,10 @@ const GlobalModel: GlobalModelType = {
     collapsed: false,
     notices: [],
     httpPackages: [],
-    proxySettings: []
+    proxySettings: [],
+    httpListConfig: {
+      stoped: false
+    }
   },
 
   effects: {
@@ -140,6 +148,10 @@ const GlobalModel: GlobalModelType = {
       };
     },
     httpPackageChange(state = { notices: [], collapsed: true, httpPackages: []}, { payload }): GlobalModelState {
+      if (state.httpListConfig.stoped) {
+        return state;
+      }
+      
       const {httpPackages = []} = state;
       const httpPackageTemp = httpPackages.find(p => p.id === payload.id);
       const httpPackage: HttpPackage = httpPackageTemp || {id: payload.id};
@@ -155,9 +167,24 @@ const GlobalModel: GlobalModelType = {
       }
       return {
         ...state,
-        httpPackages: [...httpPackages]
+        httpPackages: [...httpPackages].slice(-200)
       };
     },
+
+    httpPackageClear(state) {
+      return {
+        ...state,
+        httpPackages: []
+      };
+    },
+
+    httpListConfigChange(state, { payload }): GlobalModelState {
+      return {
+        ...state,
+        httpListConfig: {...state.httpListConfig, ...payload}
+      };
+    },
+
     proxySettingChange(stateArg = state, { payload }): GlobalModelState {
       return {
         ...stateArg,

@@ -1,9 +1,13 @@
 import { Form, Modal, Input, Select, Radio, Switch } from 'antd';
 import React, { useState } from 'react';
+import AceEditor from "react-ace";
 import { ProxySetting } from '@/models/connect';
+import "ace-builds/src-noconflict/mode-javascript";
+import "ace-builds/src-noconflict/theme-github";
 import './index.less';
 
 const {Option} = Select;
+const { TextArea } = Input;
 const RadioGroup = Radio.Group;
 const FormItem = Form.Item;
 
@@ -16,6 +20,11 @@ const formItemLayout = {
   wrapperCol: { span: 12 },
 };
 
+const getInitChangeCode = () => `// 按需修改url、headers、body，可以返回具体的值，也可以返回一个Promise
+async function reqHook({url, headers, body}) {
+  return {url, headers, body};
+}`;
+
 const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
   setting,
   onOk
@@ -25,8 +34,10 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
   nowSetting.from = nowSetting.from || 'http://';
   nowSetting.to = nowSetting.to || 'http://';
   nowSetting.enabled = nowSetting.enabled !== false;
+  nowSetting.reqChange = nowSetting.reqChange || false;
+  nowSetting.reqChangeCode = nowSetting.reqChangeCode || getInitChangeCode();
 
-  const {type, from, to, enabled} = nowSetting;
+  const {type, from, to, enabled, reqChange, reqChangeCode} = nowSetting;
   const [form] = Form.useForm();
 
   const setSetting = (s: object) => setNowSetting({...nowSetting, ...s});
@@ -58,9 +69,20 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
     }
   }
 
-  function onFinish() {
-    onOk(nowSetting);
-  }
+  const onFinish = () => onOk(nowSetting);
+
+  const renderAce = (codeKey: string) => (<AceEditor
+    mode='javascript'
+    theme='github'
+    height='300px'
+    width='800px'
+    tabSize={2}
+    onChange={(value) => {
+      form.setFieldsValue({[codeKey]: value});
+      setSetting({[codeKey]: value});
+    }}
+    editorProps={{ $blockScrolling: true }}
+  />);
 
   return (
     <Modal
@@ -125,6 +147,24 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
             onChange={({target: {value}}) => setFromToForm(value, 'to', to)}
           />
         </FormItem>
+        <FormItem
+          label='修改请求参数'
+          name='reqChange'
+          valuePropName='checked'
+          initialValue={reqChange}
+        >
+          <Switch onChange={checked => {
+            form.setFieldsValue({reqChange: checked});
+            setSetting({reqChange: checked});
+          }} />
+        </FormItem>
+        {reqChange && <FormItem
+          label='代码'
+          name='reqChangeCode'
+          initialValue={reqChangeCode}
+        >
+          {renderAce('reqChangeCode')}
+        </FormItem>}
       </Form>
     </Modal>
   );

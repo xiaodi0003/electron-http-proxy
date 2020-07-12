@@ -63,3 +63,20 @@ export const getRouteAuthority = (path: string, routeData: Route[]) => {
   });
   return authorities;
 };
+
+export function getDomain(url: string) {
+  return url.replace(/.*?:\/\/([^/]*).*/, '$1');
+}
+
+export function getPath(url: string) {
+  return url.replace(/.*?:\/\/[^/]*(.*)/, '$1');
+}
+
+export function getProtocol(url: string) {
+  return url.replace(/(.*?):.*/, '$1');
+}
+
+export function getPort(url: string) {
+  const match = url.match(/.*?:\/\/.*?:(\d+).*/);
+  return match ? Number(match[1]) : (getProtocol(url).toLocaleLowerCase() === 'https' ? 443 : 80);
+}

@@ -47,7 +47,7 @@ export default defineConfig({
             {
               path: '/dynamicproxy',
               name: 'list.dynamicproxy',
-              icon: 'smile',
+              icon: 'swap',
               component: './DynamicProxy',
             },
             {

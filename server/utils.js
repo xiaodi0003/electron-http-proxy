@@ -1,5 +1,5 @@
 exports.getDomain = function getDomain(url) {
-  return url.replace(/.*?:\/\/([^/]*).*/, '$1');
+  return url.replace(/.*?:\/\/([^/:]*).*/, '$1');
 }
 
 exports.getPath = function getPath(url) {

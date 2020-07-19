@@ -31,10 +31,10 @@ const HttpListOperation: React.FC<{global: GlobalModelState; dispatch: Dispatch}
   return (
     <div className='httplist-operation'>
       {stoped 
-        ? <Tooltip title='暂停'>
+        ? <Tooltip title='启动'>
           <PlayCircleOutlined onClick={changeStoped} />
         </Tooltip>
-        : <Tooltip title='启动'>
+        : <Tooltip title='暂停'>
           <PauseCircleOutlined onClick={changeStoped} />
         </Tooltip>}
         <Tooltip title='清空'>

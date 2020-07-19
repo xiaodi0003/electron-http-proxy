@@ -20,7 +20,11 @@ export interface ProxySetting {
   enabled: boolean,
   type: string,
   from: string,
-  to: string
+  to: string,
+  reqHook: boolean,
+  reqHookCode: string,
+  resHook: boolean,
+  resHookCode: string
 }
 
 export interface HttpListConfig {

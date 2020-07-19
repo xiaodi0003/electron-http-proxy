@@ -46,20 +46,17 @@ module.exports = {
   summary: 'page proxy config',
   *beforeSendRequest(requestDetail) {
     getReq(requestDetail);
-    const result = yield doProxy.proxy(requestDetail);
+    const result = yield doProxy.proxyReq(requestDetail);
     if (result.response) {
+      // todo 在这里加上对于本地文件返回的处理
       sendFileRes(requestDetail, result.response);
     }
     return result;
   },
   *beforeSendResponse(requestDetail, responseDetail) {
-    sendRes(requestDetail, responseDetail);
-    const newResponse = responseDetail.response;
-    // newResponse.body += '- AnyProxy Hacked!';
-    // console.log('newResponse.body', newResponse.body);
-    return new Promise((resolve, reject) => {
-      setTimeout(() => resolve({ response: newResponse }), 1);
-    });
+    const result = yield doProxy.proxyRes(requestDetail, responseDetail);
+    sendRes(requestDetail, result);
+    return result;
   },
   *beforeDealHttpsRequest(requestDetail) { return true; },
   // 请求出错的事件

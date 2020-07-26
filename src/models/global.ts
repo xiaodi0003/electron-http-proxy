@@ -24,7 +24,8 @@ export interface ProxySetting {
   reqHook: boolean,
   reqHookCode: string,
   resHook: boolean,
-  resHookCode: string
+  resHookCode: string,
+  delay: number
 }
 
 export interface HttpListConfig {
@@ -171,7 +172,7 @@ const GlobalModel: GlobalModelType = {
       }
       return {
         ...state,
-        httpPackages: [...httpPackages].slice(-200)
+        httpPackages: [...httpPackages].slice(-500)
       };
     },
 

@@ -5,10 +5,28 @@ const {getProtocol, getPort, getDomain, getPath} = require('./utils.js');
 const pSettings = require('./proxySettings.js');
 const { url } = require('inspector');
 
-exports.proxyReq = function(requestDetail) {
+async function sleep(setting) {
+  if (setting && setting.delay && !isNaN(setting.delay)) {
+    return new Promise(r => {
+      setTimeout(() => r(true), setting.delay);
+    });
+  }
+  return true;
+}
+
+function discernLocalhost(req) {
+  const options = req.requestOptions;
+  if (options.hostname === 'll') {
+    options.hostname = 'localhost';
+  }
+}
+
+exports.proxyReq = async function(requestDetail) {
+  discernLocalhost(requestDetail);
   const setting = pSettings.getProxySettings().filter(s => s.enabled).find(s => findSetting(s, requestDetail));
   if (setting) {
     requestDetail._req.proxySetting = setting;
+    await sleep(setting)
     if (setting.reqHook) {
       return doReqHook(setting, requestDetail);
     }
@@ -43,7 +61,7 @@ function findSetting(setting, req) {
       }
       break;
     case 'regex':
-      if (new RegExp(from).test(from)) {
+      if (new RegExp(from).test(req.url)) {
         return true;
       }
       break;

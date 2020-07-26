@@ -31,7 +31,7 @@ function createWindow() {
   mainWindow.loadURL(startUrl);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   addWindow(mainWindow);
   mainWindow.on("closed", () => removeWindow(mainWindow));

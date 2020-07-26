@@ -4,7 +4,6 @@ const channelList = ['req', 'res', 'proxySettings'];
 export function handleElectronMessage(dispatch) {
   channelList.forEach(channel => {
     ipcRenderer.on(channel, (event, payload) => {
-      console.log(event, payload);
       if (['req', 'res'].includes(channel)) {
         dispatch({
           type: 'global/httpPackageChange',

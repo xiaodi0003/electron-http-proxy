@@ -1,4 +1,4 @@
-import { Table } from 'antd';
+// import { Table } from 'antd';
 import React, { useState } from 'react';
 import { connect } from 'umi';
 import { ConnectState, GlobalModelState, HttpPackage } from '@/models/connect';
@@ -79,20 +79,37 @@ const HttpList: React.FC<{global: GlobalModelState}> = ({
     },
   ];
 
-  console.log('httplist', httpPackages);
-
   return (
     <div>
       <HttpListOperation />
-      <Table
-        rowKey='id'
-        columns={columns}
-        /* table是一个pureComponent，所以只能给他传一个新对象 */
-        dataSource={httpPackages}
-        pagination={false}
-        className='httptable'
-        scroll={{ x: 'calc(100vw - 180px)', y: 'calc(100vh - 85px)' }}
-      />
+      <div className='httptable'>
+        <table>
+          <tbody>
+            <tr>
+              <th>序号</th>
+              <th>Code</th>
+              <th>Method</th>
+              <th>协议</th>
+              <th>Host</th>
+              <th>Path</th>
+              <th>Operation</th>
+            </tr>
+            {/* todo 列头固定 */}
+            {httpPackages?.map((data, i) => (
+              <tr key={data.id}>
+                <td>{i + 1}</td>
+                <td>{data.res ? data.res.statusCode : '--'}</td>
+                <td>{data.req.method}</td>
+                <td>{getProtocol(data.req.url)}</td>
+                <td title={getDomain(data.req.url)}>{getDomain(data.req.url)}</td>
+                <td title={getPath(data.req.url)}>{getPath(data.req.url)}</td>
+                <td><a onClick={() => setDetail(data)}>Detail</a></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      
       <HttpPackageDetail
         detail={detail}
         getPath={getPath}

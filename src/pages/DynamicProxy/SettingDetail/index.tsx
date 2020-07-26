@@ -1,10 +1,8 @@
-import { Form, Modal, Input, Select, Radio, Switch } from 'antd';
+import { Form, Modal, Input, Select, Radio, Switch, Upload } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
-import AceEditor from "react-ace";
 import { ProxySetting } from '@/models/connect';
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/theme-github";
-import "ace-builds/src-noconflict/ext-language_tools";
+import HookCodeAce from './HookCodeAce';
 import './index.less';
 
 const {Option} = Select;
@@ -34,6 +32,7 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
   setting,
   onOk
 }) => {
+  const [showTest, setShowTest] = useState(false);
   const [nowSetting, setNowSetting] = useState(setting);
   nowSetting.type = nowSetting.type || 'exact';
   nowSetting.from = nowSetting.from || 'http://';
@@ -43,12 +42,13 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
   nowSetting.reqHookCode = nowSetting.reqHookCode || getInitReqChangeCode();
   nowSetting.resHook = nowSetting.resHook || false;
   nowSetting.resHookCode = nowSetting.resHookCode || getInitResChangeCode();
+  nowSetting.delay = nowSetting.delay || 0;
 
-  const {type, from, to, enabled, reqHook, reqHookCode, resHook, resHookCode} = nowSetting;
+  const {type, from, to, enabled, reqHook, reqHookCode, resHook, resHookCode, delay} = nowSetting;
   const [form] = Form.useForm();
   const disableTo = !!reqHook;
 
-  const setSetting = (s: object) => setNowSetting({...nowSetting, ...s});
+  const setSetting = (s: object) => setNowSetting(Object.assign(nowSetting, s));
 
   const selectFromProtocol = (
     <Select value={getProtocol(from)} style={{ width: 90 }} onChange={v => setSetting({from: `${v}://${removeProtocol(from)}`})}>
@@ -72,29 +72,35 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
       url = removeProtocol(value.trim());
       form.setFieldsValue({[field]: url});
     } else {
-      form.setFieldsValue({[field]: url});
       setSetting({[field]: `${getProtocol(oldValue)}://${url}`});
+      form.setFieldsValue({[field]: url});
+    }
+    form.validateFields(['test']);
+  }
+
+  function onSelectFile({file}) {
+    setFromToForm(file.originFileObj.path, 'to', to);
+  }
+
+  function testFrom(testUrl, fromUrl, nowType) {
+    switch(nowType) {
+      case 'regex':
+        return new RegExp(fromUrl).test(testUrl);
+      case 'prefix':
+        return testUrl.startsWith(fromUrl);
+      case 'exact':
+      default:
+        return testUrl === fromUrl;
     }
   }
 
   const onFinish = () => onOk(nowSetting);
 
-  const renderAce = (codeKey: string) => (<AceEditor
-    mode='javascript'
-    theme='monokai'
-    height='300px'
-    width='800px'
-    tabSize={2}
+  const renderAce = (codeKey: string) => (<HookCodeAce
     onChange={(value) => {
       form.setFieldsValue({[codeKey]: value});
       setSetting({[codeKey]: value});
     }}
-    setOptions={{
-      enableBasicAutocompletion: true,
-      enableLiveAutocompletion: true,
-      enableSnippets: true
-    }}
-    editorProps={{ $blockScrolling: true }}
   />);
 
   return (
@@ -123,8 +129,9 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
           initialValue={type}
         >
           <RadioGroup onChange={({target: {value}}) => {
-            form.setFieldsValue({type: value});
             setSetting({type: value});
+            form.setFieldsValue({type: value});
+            form.validateFields(['test']);
           }}>
             <Radio value="exact">Exact</Radio>
             <Radio value="prefix">Prefix</Radio>
@@ -142,10 +149,33 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
         >
           <Input
             addonBefore={selectFromProtocol}
-            addonAfter="Test"
+            addonAfter={<span onClick={() => setShowTest(!showTest)}>Test</span>}
             onChange={({target: {value}}) => setFromToForm(value, 'from', from)}
           />
         </FormItem>
+        {showTest && <FormItem
+          label='Test'
+          name='test'
+          initialValue={from}
+          dependencies={['type', 'from']}
+          rules={[({ getFieldValue }) => ({
+            validator(rule, value) {
+              return new Promise((resolve, reject) => {
+                if (testFrom(value, nowSetting.from, nowSetting.type)) {
+                  resolve();
+                } else {
+                  reject('Not match!');
+                }
+              });
+            },
+          })]}
+        >
+          <Input
+            className='test'
+            allowClear
+            addonAfter={<CloseOutlined onClick={() => setShowTest(false)} />}
+          />
+        </FormItem>}
         <FormItem
           label='代理目标'
           name='to'
@@ -158,7 +188,26 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
           <Input
             disabled={disableTo}
             addonBefore={selectToProtocol}
+            addonAfter={to.startsWith('file://') && <Upload onChange={onSelectFile} fileList={[]}>选择</Upload>}
             onChange={({target: {value}}) => setFromToForm(value, 'to', to)}
+          />
+        </FormItem>
+
+        <FormItem
+          label='延迟'
+          name='delay'
+          rules={[{
+            type: 'number',
+            message: '只能填写数字'
+          }]}
+          initialValue={delay}
+        >
+          <Input
+            onChange={({target: {value}}) => {
+              const v = isNaN(Number(value)) ? delay : Number(value);
+              form.setFieldsValue({delay: v});
+              setSetting({delay: v});
+            }}
           />
         </FormItem>
 

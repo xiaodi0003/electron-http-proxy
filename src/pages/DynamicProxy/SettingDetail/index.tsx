@@ -48,6 +48,7 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
   const [form] = Form.useForm();
   const disableTo = !!reqHook;
 
+  // todo 这里的代码有问题，不会触发render
   const setSetting = (s: object) => setNowSetting(Object.assign(nowSetting, s));
 
   const selectFromProtocol = (
@@ -75,6 +76,8 @@ const SettingDetail: React.FC<{setting: ProxySetting; onOk: any}> = ({
       setSetting({[field]: `${getProtocol(oldValue)}://${url}`});
       form.setFieldsValue({[field]: url});
     }
+    // 用form的dependence来实现一个变化触发另一个校验貌似有bug：A依赖B，只有到A变化之后，B的变化才触发A的校验
+    // 所以需要手动触发
     form.validateFields(['test']);
   }
 

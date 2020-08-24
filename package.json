@@ -33,7 +33,7 @@
     "test:component": "umi test ./src/components",
     "tsc": "tsc",
     "start-electron": "export PORT=8001 && electron . --inspect=5858",
-    "start-all": "npm run start & npm run start-electron",
+    "start-all": "concurrently \"npm run start\" \"npm run start-electron\" ",
     "package": "electron-builder build --mac --publish never",
     "build-package": "npm run build && npm run package",
     "anyproxy-ca": "anyproxy-ca"
@@ -97,6 +97,7 @@
     "@umijs/preset-ui": "^2.0.9",
     "carlo": "^0.9.46",
     "chalk": "^4.0.0",
+    "concurrently": "^5.3.0",
     "cross-env": "^7.0.0",
     "cross-port-killer": "^1.1.1",
     "detect-installer": "^1.0.1",

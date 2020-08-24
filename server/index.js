@@ -1,5 +1,6 @@
 const AnyProxy = require('anyproxy');
 const rule = require('./rule');
+const systemShell = require('./systemShell');
 
 exports.start = function(port) {
   const options = {
@@ -24,6 +25,8 @@ exports.start = function(port) {
 };
 
 exports.end = function() {
-  AnyProxy.utils.systemProxyMgr.disableGlobalProxy();
+  // 用AnyProxy无法关闭https的代理
+  // AnyProxy.utils.systemProxyMgr.disableGlobalProxy();
+  systemShell.deleteProxy();
   proxyServer.close();
 }

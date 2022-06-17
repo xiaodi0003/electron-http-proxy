@@ -1253,20 +1253,20 @@
     ajv "^6.12.0"
     ajv-keywords "^3.4.1"
 
-"@electron/get@^1.0.1":
-  version "1.12.2"
-  resolved "https://registry.npm.taobao.org/@electron/get/download/@electron/get-1.12.2.tgz#6442066afb99be08cefb9a281e4b4692b33764f3"
-  integrity sha1-ZEIGavuZvgjO+5ooHktGkrM3ZPM=
+"@electron/get@^1.13.0":
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/@electron/get/-/get-1.14.1.tgz#16ba75f02dffb74c23965e72d617adc721d27f40"
+  integrity sha512-BrZYyL/6m0ZXz/lDxy/nlVhQz+WF+iPS6qXolEU8atw7h6v1aYkjwJZ63m+bJMBTxDE66X+r2tPS4a/8C82sZw==
   dependencies:
     debug "^4.1.1"
     env-paths "^2.2.0"
     fs-extra "^8.1.0"
     got "^9.6.0"
     progress "^2.0.3"
-    sanitize-filename "^1.6.2"
+    semver "^6.2.0"
     sumchecker "^3.0.1"
   optionalDependencies:
-    global-agent "^2.0.2"
+    global-agent "^3.0.0"
     global-tunnel-ng "^2.7.1"
 
 "@emotion/is-prop-valid@^0.8.1":
@@ -2165,17 +2165,17 @@
   resolved "https://registry.npm.taobao.org/@types/mustache/download/@types/mustache-4.0.1.tgz#e4d421ed2d06d463b120621774185a5cd1b92d77"
   integrity sha1-5NQh7S0G1GOxIGIXdBhaXNG5LXc=
 
-"@types/node@*":
-  version "14.0.18"
-  resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-14.0.18.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-14.0.18.tgz#5111b2285659442f9f95697386a2b42b875bd7e9"
-  integrity sha1-URGyKFZZRC+flWlzhqK0K4db1+k=
+"@types/node@*", "@types/node@^14.6.2":
+  version "14.18.21"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.18.21.tgz#0155ee46f6be28b2ff0342ca1a9b9fd4468bef41"
+  integrity sha512-x5W9s+8P4XteaxT/jKF0PSb7XEvo5VmqEWgsMlyeY4ZlLK8I6aH6g5TPPyDlLAep+GYf4kefb7HFyc7PAO3m+Q==
 
 "@types/node@14.0.14":
   version "14.0.14"
   resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-14.0.14.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-14.0.14.tgz#24a0b5959f16ac141aeb0c5b3cd7a15b7c64cbce"
   integrity sha1-JKC1lZ8WrBQa6wxbPNehW3xky84=
 
-"@types/node@^12.0.12", "@types/node@^12.6.2":
+"@types/node@^12.6.2":
   version "12.12.48"
   resolved "https://registry.npm.taobao.org/@types/node/download/@types/node-12.12.48.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-12.12.48.tgz#4135f064eeed9fcfb4756deea5ba2caa11603391"
   integrity sha1-QTXwZO7tn8+0dW3upbosqhFgM5E=
@@ -6574,13 +6574,13 @@ electron-to-chromium@^1.3.122, electron-to-chromium@^1.3.488:
   resolved "https://registry.npm.taobao.org/electron-to-chromium/download/electron-to-chromium-1.3.490.tgz?cache=0&sync_timestamp=1594121789864&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Felectron-to-chromium%2Fdownload%2Felectron-to-chromium-1.3.490.tgz#12aa776c493e66ba21536512fc317bdda6d04cd4"
   integrity sha1-Eqp3bEk+ZrohU2US/DF73abQTNQ=
 
-electron@^9.1.0:
-  version "9.1.0"
-  resolved "https://registry.npm.taobao.org/electron/download/electron-9.1.0.tgz?cache=0&sync_timestamp=1594147794350&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Felectron%2Fdownload%2Felectron-9.1.0.tgz#ca77600c9e4cd591298c340e013384114d3d8d05"
-  integrity sha1-yndgDJ5M1ZEpjDQOATOEEU09jQU=
+electron@^15.5.5:
+  version "15.5.5"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-15.5.5.tgz#796b7822bfb2b045b504e40657674f2869361681"
+  integrity sha512-cGS1ueek14WLvLJlJbId3fmqJLvkr7VuBI0hHt6gpKaj8m2iv/NMteRg0deLgwlxjEF6ZGGNerUJW6a96rNq/Q==
   dependencies:
-    "@electron/get" "^1.0.1"
-    "@types/node" "^12.0.12"
+    "@electron/get" "^1.13.0"
+    "@types/node" "^14.6.2"
     extract-zip "^1.0.3"
 
 elliptic@^6.0.0, elliptic@^6.5.2:
@@ -8304,13 +8304,12 @@ glob@7.1.6, glob@^7.0.3, glob@^7.1.1, glob@^7.1.2, glob@^7.1.3, glob@^7.1.4, glo
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
-global-agent@^2.0.2:
-  version "2.1.12"
-  resolved "https://registry.npm.taobao.org/global-agent/download/global-agent-2.1.12.tgz#e4ae3812b731a9e81cbf825f9377ef450a8e4195"
-  integrity sha1-5K44Ercxqegcv4Jfk3fvRQqOQZU=
+global-agent@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/global-agent/-/global-agent-3.0.0.tgz#ae7cd31bd3583b93c5a16437a1afe27cc33a1ab6"
+  integrity sha512-PT6XReJ+D07JvGoxQMkT6qji/jVNfX/h364XHZOWeRzy64sSFr+xJ5OX7LI3b4MPQzdL4H8Y8M0xzPpsVMwA8Q==
   dependencies:
     boolean "^3.0.1"
-    core-js "^3.6.5"
     es6-error "^4.1.1"
     matcher "^3.0.0"
     roarr "^2.15.3"
@@ -15699,7 +15698,7 @@ sane@^4.0.3:
     minimist "^1.1.1"
     walker "~1.0.5"
 
-sanitize-filename@^1.6.2, sanitize-filename@^1.6.3:
+sanitize-filename@^1.6.3:
   version "1.6.3"
   resolved "https://registry.npm.taobao.org/sanitize-filename/download/sanitize-filename-1.6.3.tgz#755ebd752045931977e30b2025d340d7c9090378"
   integrity sha1-dV69dSBFkxl34wsgJdNA18kJA3g=

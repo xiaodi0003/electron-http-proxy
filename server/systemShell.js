@@ -18,6 +18,7 @@ function exec(cmd) {
 exports.setProxy = (port) => {
   exec(`networksetup -setwebproxy Wi-Fi 127.0.0.1 ${port}`);
   exec(`networksetup -setsecurewebproxy Wi-Fi 127.0.0.1 ${port}`);
+  exec(`networksetup -setproxybypassdomains "Wi-Fi" 127.0.0.2`);
 };
 
 exports.deleteProxy = () => {

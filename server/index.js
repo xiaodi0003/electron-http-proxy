@@ -21,7 +21,8 @@ exports.start = function(port) {
   proxyServer.on('error', () => { /* */ });
   proxyServer.start();
 
-  AnyProxy.utils.systemProxyMgr.enableGlobalProxy('127.0.0.1', port);
+  // AnyProxy.utils.systemProxyMgr.enableGlobalProxy('127.0.0.1', port);
+  systemShell.setProxy(port);
 };
 
 exports.end = function() {

@@ -1,0 +1,287 @@
+<template>
+  <el-dialog
+    v-model="visible"
+    :title="setting.id ? 'Edit' : 'Add'"
+    width="900px"
+    @close="handleCancel"
+  >
+    <el-form
+      ref="formRef"
+      :model="formData"
+      :rules="rules"
+      label-width="120px"
+    >
+      <el-form-item label="启用" prop="enabled">
+        <el-switch v-model="formData.enabled" />
+      </el-form-item>
+
+      <el-form-item label="配置类型" prop="type">
+        <el-radio-group v-model="formData.type" @change="handleTypeChange">
+          <el-radio label="exact">Exact</el-radio>
+          <el-radio label="prefix">Prefix</el-radio>
+          <el-radio label="regex">Regex</el-radio>
+        </el-radio-group>
+      </el-form-item>
+
+      <el-form-item label="匹配条件" prop="from">
+        <el-input v-model="fromUrl" @blur="handleFromBlur">
+          <template #prepend>
+            <el-select v-model="fromProtocol" style="width: 90px" @change="updateFromUrl">
+              <el-option label="http://" value="http" />
+              <el-option label="https://" value="https" />
+            </el-select>
+          </template>
+          <template #append>
+            <span style="cursor: pointer" @click="showTest = !showTest">Test</span>
+          </template>
+        </el-input>
+      </el-form-item>
+
+      <el-form-item v-if="showTest" label="Test" prop="test">
+        <el-input v-model="testUrl" @blur="validateTest">
+          <template #append>
+            <el-icon @click="showTest = false" style="cursor: pointer">
+              <Close />
+            </el-icon>
+          </template>
+        </el-input>
+      </el-form-item>
+
+      <el-form-item label="代理目标" prop="to">
+        <el-input v-model="toUrl" :disabled="formData.reqHook" @blur="handleToBlur">
+          <template #prepend>
+            <el-select v-model="toProtocol" :disabled="formData.reqHook" style="width: 90px" @change="updateToUrl">
+              <el-option label="http://" value="http" />
+              <el-option label="https://" value="https" />
+              <el-option label="file://" value="file" />
+            </el-select>
+          </template>
+          <template #append v-if="toProtocol === 'file'">
+            <input
+              ref="fileInputRef"
+              type="file"
+              webkitdirectory
+              directory
+              style="display: none"
+              @change="handleSelectFile"
+            />
+            <el-button type="text" @click="triggerFileSelect">选择</el-button>
+          </template>
+        </el-input>
+      </el-form-item>
+
+      <el-form-item label="延迟" prop="delay">
+        <el-input-number v-model="formData.delay" :min="0" />
+      </el-form-item>
+
+      <el-form-item label="修改请求参数" prop="reqHook">
+        <el-switch v-model="formData.reqHook" />
+      </el-form-item>
+
+      <el-form-item v-if="formData.reqHook" label="代码" prop="reqHookCode">
+        <CodeEditor v-model="formData.reqHookCode" />
+      </el-form-item>
+
+      <el-form-item label="修改响应结果" prop="resHook">
+        <el-switch v-model="formData.resHook" />
+      </el-form-item>
+
+      <el-form-item v-if="formData.resHook" label="代码" prop="resHookCode">
+        <CodeEditor v-model="formData.resHookCode" />
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <el-button @click="handleCancel">取消</el-button>
+      <el-button type="primary" @click="handleOk">确定</el-button>
+    </template>
+  </el-dialog>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, watch } from 'vue';
+import { ElMessage } from 'element-plus';
+import { Close } from '@element-plus/icons-vue';
+import type { FormInstance, FormRules } from 'element-plus';
+import type { ProxySetting } from '../../../stores/global';
+import CodeEditor from './CodeEditor.vue';
+
+const props = defineProps<{
+  setting: ProxySetting;
+}>();
+
+const emit = defineEmits<{
+  ok: [setting: ProxySetting];
+  cancel: [];
+}>();
+
+const visible = ref(true);
+const formRef = ref<FormInstance>();
+const showTest = ref(false);
+const testUrl = ref('');
+const fileInputRef = ref<HTMLInputElement>();
+
+const getInitReqChangeCode = () => `// 按需修改url、headers、body，可以返回具体的值，也可以返回一个Promise
+async function reqHook({url, headers, body}) {
+  return {url, headers, body};
+}`;
+
+const getInitResChangeCode = () => `// 按需修改headers、body，可以返回具体的值，也可以返回一个Promise
+async function resHook(request, {code, headers, body}) {
+  return {code, headers, body};
+}`;
+
+const formData = reactive<ProxySetting>({
+  id: props.setting.id,
+  enabled: props.setting.enabled !== false,
+  type: props.setting.type || 'exact',
+  from: props.setting.from || 'http://',
+  to: props.setting.to || 'http://',
+  reqHook: props.setting.reqHook || false,
+  reqHookCode: props.setting.reqHookCode || getInitReqChangeCode(),
+  resHook: props.setting.resHook || false,
+  resHookCode: props.setting.resHookCode || getInitResChangeCode(),
+  delay: props.setting.delay || 0,
+});
+
+const removeProtocol = (url: string) => url.replace(/^.*?:\/\//, '');
+const getProtocol = (url: string) => url.replace(/(.*?):.*/, '$1');
+const hasProtocol = (url: string) => ['http', 'https', 'file'].includes(getProtocol(url));
+
+const fromProtocol = ref(getProtocol(formData.from));
+const fromUrl = ref(removeProtocol(formData.from));
+const toProtocol = ref(getProtocol(formData.to));
+const toUrl = ref(removeProtocol(formData.to));
+
+const updateFromUrl = () => {
+  formData.from = `${fromProtocol.value}://${fromUrl.value}`;
+};
+
+const updateToUrl = () => {
+  formData.to = `${toProtocol.value}://${toUrl.value}`;
+};
+
+const handleFromBlur = () => {
+  if (hasProtocol(fromUrl.value)) {
+    fromProtocol.value = getProtocol(fromUrl.value);
+    fromUrl.value = removeProtocol(fromUrl.value);
+  }
+  updateFromUrl();
+};
+
+const handleToBlur = () => {
+  if (hasProtocol(toUrl.value)) {
+    toProtocol.value = getProtocol(toUrl.value);
+    toUrl.value = removeProtocol(toUrl.value);
+  }
+  updateToUrl();
+};
+
+const triggerFileSelect = () => {
+  fileInputRef.value?.click();
+};
+
+const handleSelectFile = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const files = target.files;
+  
+  if (files && files.length > 0) {
+    // 获取第一个文件的路径
+    const file = files[0] as any;
+    if (file.path) {
+      // 如果选择的是文件夹，使用文件夹路径
+      // 如果选择的是文件，使用文件路径
+      let path = file.path;
+      
+      // 如果是文件夹中的文件，提取文件夹路径
+      if (files.length > 1 || file.webkitRelativePath) {
+        // 从 webkitRelativePath 中提取文件夹路径
+        const relativePath = file.webkitRelativePath;
+        if (relativePath) {
+          const folderName = relativePath.split('/')[0];
+          path = file.path.replace(new RegExp(`/${relativePath.split('/').slice(1).join('/')}$`), '');
+          path = path.replace(new RegExp(`/${folderName}$`), '') + '/' + folderName;
+        }
+      }
+      
+      // 确保文件夹路径末尾有 /
+      if (!path.endsWith('/')) {
+        path += '/';
+      }
+      
+      toUrl.value = path;
+      updateToUrl();
+    }
+  }
+  
+  // 重置 input 以便可以重复选择同一个文件/文件夹
+  target.value = '';
+};
+
+const testFrom = (testUrl: string, fromUrl: string, nowType: string) => {
+  switch (nowType) {
+    case 'regex':
+      return new RegExp(fromUrl).test(testUrl);
+    case 'prefix':
+      return testUrl.startsWith(fromUrl);
+    case 'exact':
+    default:
+      return testUrl === fromUrl;
+  }
+};
+
+const validateTest = () => {
+  if (testUrl.value && !testFrom(testUrl.value, formData.from, formData.type)) {
+    ElMessage.error('Not match!');
+  }
+};
+
+const handleTypeChange = () => {
+  if (testUrl.value) {
+    validateTest();
+  }
+};
+
+const rules: FormRules = {
+  from: [{ required: true, message: '必填', trigger: 'blur' }],
+  to: [
+    {
+      required: true,
+      validator: (rule, value, callback) => {
+        if (!formData.reqHook && !value) {
+          callback(new Error('必填'));
+        } else {
+          callback();
+        }
+      },
+      trigger: 'blur',
+    },
+  ],
+};
+
+const handleOk = async () => {
+  if (!formRef.value) return;
+  
+  await formRef.value.validate((valid) => {
+    if (valid) {
+      emit('ok', { ...formData });
+    }
+  });
+};
+
+const handleCancel = () => {
+  emit('cancel');
+};
+
+watch(() => formData.reqHook, (val) => {
+  if (val) {
+    formRef.value?.clearValidate('to');
+  }
+});
+</script>
+
+<style scoped>
+:deep(.el-form-item__content) {
+  line-height: normal;
+}
+</style>

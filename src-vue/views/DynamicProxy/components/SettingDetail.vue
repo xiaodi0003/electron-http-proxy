@@ -38,13 +38,16 @@
       </el-form-item>
 
       <el-form-item v-if="showTest" label="Test" prop="test">
-        <el-input v-model="testUrl" @blur="validateTest">
+        <el-input v-model="testUrl">
           <template #append>
             <el-icon @click="showTest = false" style="cursor: pointer">
               <Close />
             </el-icon>
           </template>
         </el-input>
+        <div v-if="testResult" :style="{ color: testResult.success ? '#67c23a' : '#f56c6c', marginTop: '4px', fontSize: '12px' }">
+          {{ testResult.message }}
+        </div>
       </el-form-item>
 
       <el-form-item label="代理目标" prop="to">
@@ -100,7 +103,6 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue';
-import { ElMessage } from 'element-plus';
 import { Close } from '@element-plus/icons-vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import type { ProxySetting } from '../../../stores/global';
@@ -119,6 +121,7 @@ const visible = ref(true);
 const formRef = ref<FormInstance>();
 const showTest = ref(false);
 const testUrl = ref('');
+const testResult = ref<{ success: boolean; message: string } | null>(null);
 const fileInputRef = ref<HTMLInputElement>();
 
 const getInitReqChangeCode = () => `// 按需修改url、headers、body，可以返回具体的值，也可以返回一个Promise
@@ -231,12 +234,20 @@ const testFrom = (testUrl: string, fromUrl: string, nowType: string) => {
 };
 
 const validateTest = () => {
-  if (testUrl.value && !testFrom(testUrl.value, formData.from, formData.type)) {
-    ElMessage.error('Not match!');
+  if (testUrl.value) {
+    const isMatch = testFrom(testUrl.value, formData.from, formData.type);
+    if (isMatch) {
+      testResult.value = { success: true, message: '✓ 匹配成功' };
+    } else {
+      testResult.value = { success: false, message: '✗ 匹配失败' };
+    }
+  } else {
+    testResult.value = null;
   }
 };
 
 const handleTypeChange = () => {
+  testResult.value = null;
   if (testUrl.value) {
     validateTest();
   }
@@ -276,6 +287,18 @@ const handleCancel = () => {
 watch(() => formData.reqHook, (val) => {
   if (val) {
     formRef.value?.clearValidate('to');
+  }
+});
+
+// 监听 testUrl 变化，实时验证
+watch(testUrl, () => {
+  validateTest();
+});
+
+// 监听 formData.from 变化，实时验证
+watch(() => formData.from, () => {
+  if (testUrl.value) {
+    validateTest();
   }
 });
 </script>

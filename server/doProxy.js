@@ -143,7 +143,8 @@ function handleDirectConnection(target, requestDetail) {
   newRequestOptions.hostname = getDomain(target);
   newRequestOptions.port = getPort(target);
   newRequestOptions.path = getPath(target);
-  newRequestOptions.headers.host = newRequestOptions.hostname;
+  newRequestOptions.headers.Host = newRequestOptions.hostname;
+  newRequestOptions.headers.Origin = requestDetail.protocol + '://' + newRequestOptions.hostname;
   return requestDetail;
 }
 

@@ -165,7 +165,7 @@ function handleHttpProxy(target, requestDetail, backendProxy) {
     // 2. Send the full URL in the request path (not just the path)
     requestDetail.protocol = 'http:';
     newRequestOptions.hostname = backendProxy.host;
-    newRequestOptions.port = backendProxy.port;
+    newRequestOptions.port = parseInt(backendProxy.port, 10); // Convert port to number
     
     // For HTTP proxy, the path should be the full target URL
     newRequestOptions.path = target;
@@ -217,7 +217,7 @@ async function handleSocks5Proxy(target, requestDetail, backendProxy) {
     const socksOptions = {
       proxy: {
         host: backendProxy.host,
-        port: backendProxy.port,
+        port: parseInt(backendProxy.port, 10), // Convert port to number
         type: 5,
         userId: backendProxy.username,
         password: backendProxy.password

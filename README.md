@@ -25,7 +25,7 @@ yarn
 ```
 - 使用如下命令启动前端程序：
 ```
-yarn run start
+yarn run dev:vue
 ```
 - 使用如下命令启动electron程序：
 ```

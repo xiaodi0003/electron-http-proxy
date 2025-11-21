@@ -6,6 +6,18 @@ export interface HttpPackage {
   res?: any;
 }
 
+// Backend proxy configuration interface
+export interface BackendProxyConfig {
+  type: 'direct' | 'http' | 'socks5';
+  host?: string;
+  port?: number;
+}
+
+// Default backend proxy configuration
+export const DEFAULT_BACKEND_PROXY: BackendProxyConfig = {
+  type: 'direct',
+};
+
 export interface ProxySetting {
   id?: string;
   enabled: boolean;
@@ -17,6 +29,7 @@ export interface ProxySetting {
   resHook: boolean;
   resHookCode: string;
   delay: number;
+  backendProxy?: BackendProxyConfig; // Optional backend proxy configuration
 }
 
 export interface HttpListConfig {

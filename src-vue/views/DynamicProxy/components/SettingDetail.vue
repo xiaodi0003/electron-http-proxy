@@ -73,6 +73,12 @@
         </el-input>
       </el-form-item>
 
+      <!-- Backend proxy configuration - only show for http/https targets -->
+      <BackendProxyConfig
+        v-if="toProtocol === 'http' || toProtocol === 'https'"
+        v-model="formData.backendProxy"
+      />
+
       <el-form-item label="延迟" prop="delay">
         <el-input-number v-model="formData.delay" :min="0" />
       </el-form-item>
@@ -106,7 +112,9 @@ import { ref, reactive, watch } from 'vue';
 import { Close } from '@element-plus/icons-vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import type { ProxySetting } from '../../../stores/global';
+import { DEFAULT_BACKEND_PROXY } from '../../../stores/global';
 import CodeEditor from './CodeEditor.vue';
+import BackendProxyConfig from './BackendProxyConfig.vue';
 
 const props = defineProps<{
   setting: ProxySetting;
@@ -145,6 +153,7 @@ const formData = reactive<ProxySetting>({
   resHook: props.setting.resHook || false,
   resHookCode: props.setting.resHookCode || getInitResChangeCode(),
   delay: props.setting.delay || 0,
+  backendProxy: props.setting.backendProxy || { ...DEFAULT_BACKEND_PROXY },
 });
 
 const removeProtocol = (url: string) => url.replace(/^.*?:\/\//, '');
@@ -264,6 +273,44 @@ const rules: FormRules = {
         } else {
           callback();
         }
+      },
+      trigger: 'blur',
+    },
+  ],
+  'backendProxy.host': [
+    {
+      validator: (rule, value, callback) => {
+        // Only validate when proxy type is http or socks5 and target is http/https
+        if (
+          (toProtocol.value === 'http' || toProtocol.value === 'https') &&
+          formData.backendProxy &&
+          (formData.backendProxy.type === 'http' || formData.backendProxy.type === 'socks5')
+        ) {
+          if (!value || value.trim() === '') {
+            callback(new Error('代理服务器地址不能为空'));
+            return;
+          }
+        }
+        callback();
+      },
+      trigger: 'blur',
+    },
+  ],
+  'backendProxy.port': [
+    {
+      validator: (rule, value, callback) => {
+        // Only validate when proxy type is http or socks5 and target is http/https
+        if (
+          (toProtocol.value === 'http' || toProtocol.value === 'https') &&
+          formData.backendProxy &&
+          (formData.backendProxy.type === 'http' || formData.backendProxy.type === 'socks5')
+        ) {
+          if (!value || value < 1 || value > 65535) {
+            callback(new Error('端口号必须在 1-65535 之间'));
+            return;
+          }
+        }
+        callback();
       },
       trigger: 'blur',
     },

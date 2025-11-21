@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useGlobalStore, type ProxySetting } from '../../stores/global';
+import { useGlobalStore, type ProxySetting, DEFAULT_BACKEND_PROXY } from '../../stores/global';
 import { getProxySettings, updateProxySetting, addProxySetting, deleteProxySetting } from '../../api/dynamicProxy';
 import SettingDetail from './components/SettingDetail.vue';
 
@@ -75,6 +75,7 @@ const addSetting = () => {
     resHook: false,
     resHookCode: '',
     delay: 0,
+    backendProxy: { ...DEFAULT_BACKEND_PROXY },
   };
 };
 

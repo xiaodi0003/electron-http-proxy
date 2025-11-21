@@ -1694,6 +1694,13 @@
   optionalDependencies:
     node-notifier "^6.0.0"
 
+"@jest/schemas@^29.6.3":
+  version "29.6.3"
+  resolved "http://npm.eniot.io:7001/@jest/schemas/download/@jest/schemas-29.6.3.tgz"
+  integrity sha1-Qwtc6KTgBEp+OBlmMwWnswkcjgM=
+  dependencies:
+    "@sinclair/typebox" "^0.27.8"
+
 "@jest/source-map@^24.9.0":
   version "24.9.0"
   resolved "https://registry.npm.taobao.org/@jest/source-map/download/@jest/source-map-24.9.0.tgz?cache=0&sync_timestamp=1592925340164&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2F%40jest%2Fsource-map%2Fdownload%2F%40jest%2Fsource-map-24.9.0.tgz"
@@ -1865,54 +1872,59 @@
   integrity sha1-owMetUEp8sZrJ1P4QEJm7Hv2fwo=
 
 "@rollup/rollup-android-arm-eabi@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-android-arm-eabi/download/@rollup/rollup-android-arm-eabi-4.52.4-3.tgz#b6c927e5571bd9f58cf07b88ba4870e014fcd3a3"
-  integrity sha1-tskn5Vcb2fWM8HuIukhw4BT806M=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-android-arm-eabi/download/@rollup/rollup-android-arm-eabi-4.53.2.tgz#7131f3d364805067fd5596302aad9ebef1434b32"
+  integrity sha1-cTHz02SAUGf9VZYwKq2evvFDSzI=
 
 "@rollup/rollup-android-arm64@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-android-arm64/download/@rollup/rollup-android-arm64-4.52.4-3.tgz#46e9e435cbde3fb3e3872a29d1ac65e1fd8921ce"
-  integrity sha1-RunkNcveP7Pjhyop0axl4f2JIc4=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-android-arm64/download/@rollup/rollup-android-arm64-4.53.2.tgz#7ede14d7fcf7c57821a2731c04b29ccc03145d82"
+  integrity sha1-ft4U1/z3xXghonMcBLKczAMUXYI=
 
 "@rollup/rollup-darwin-arm64@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-darwin-arm64/download/@rollup/rollup-darwin-arm64-4.52.4-3.tgz#52afbede5ab3885bb587ea877d587efd1832eff1"
-  integrity sha1-Uq++3lqziFu1h+qHfVh+/Rgy7/E=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-darwin-arm64/download/@rollup/rollup-darwin-arm64-4.53.2.tgz#d59bf9ed582b38838e86a17f91720c17db6575b9"
+  integrity sha1-1Zv57VgrOIOOhqF/kXIMF9tldbk=
 
 "@rollup/rollup-darwin-x64@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-darwin-x64/download/@rollup/rollup-darwin-x64-4.52.4-3.tgz#a033ae6a414d9a242253b20629072d9eac4aa671"
-  integrity sha1-oDOuakFNmiQiU7IGKQctnqxKpnE=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-darwin-x64/download/@rollup/rollup-darwin-x64-4.53.2.tgz#a76278d9b9da9f84ea7909a14d93b915d5bbe01e"
+  integrity sha1-p2J42bnan4TqeQmhTZO5FdW74B4=
+
+"@rollup/rollup-darwin-x64@^4.52.3":
+  version "4.52.3"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-darwin-x64/download/@rollup/rollup-darwin-x64-4.52.3.tgz"
+  integrity sha1-rnWuyI+nIGnem8o6PsIr9OapYr8=
 
 "@rollup/rollup-freebsd-arm64@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-freebsd-arm64/download/@rollup/rollup-freebsd-arm64-4.52.4-3.tgz#78133d0c12fae75c6aa8e0643c6de2ce44fc0595"
-  integrity sha1-eBM9DBL651xqqOBkPG3izkT8BZU=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-freebsd-arm64/download/@rollup/rollup-freebsd-arm64-4.53.2.tgz#1a94821a1f565b9eaa74187632d482e4c59a1707"
+  integrity sha1-GpSCGh9WW56qdBh2MtSC5MWaFwc=
 
 "@rollup/rollup-freebsd-x64@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-freebsd-x64/download/@rollup/rollup-freebsd-x64-4.52.4-3.tgz#18db16e0c61a079a2e434e0bbb7a2057db293fad"
-  integrity sha1-GNsW4MYaB5ouQ04Lu3ogV9spP60=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-freebsd-x64/download/@rollup/rollup-freebsd-x64-4.53.2.tgz#aad2274680106b2b6549b1e35e5d3a7a9f1f16af"
+  integrity sha1-qtInRoAQaytlSbHjXl06ep8fFq8=
 
 "@rollup/rollup-linux-arm-gnueabihf@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-arm-gnueabihf/download/@rollup/rollup-linux-arm-gnueabihf-4.52.4-3.tgz#980ba4553eb8a40caeafa3f9a94179f50f7086fb"
-  integrity sha1-mAukVT64pAyur6P5qUF59Q9whvs=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-arm-gnueabihf/download/@rollup/rollup-linux-arm-gnueabihf-4.53.2.tgz#100fe4306399ffeec47318a3c9b8c0e5e8b07ddb"
+  integrity sha1-EA/kMGOZ/+7EcxijybjA5eiwfds=
 
 "@rollup/rollup-linux-arm-musleabihf@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-arm-musleabihf/download/@rollup/rollup-linux-arm-musleabihf-4.52.4-3.tgz#2c655d1655a8206570a59c1c29bbf15f6c09b317"
-  integrity sha1-LGVdFlWoIGVwpZwcKbvxX2wJsxc=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-arm-musleabihf/download/@rollup/rollup-linux-arm-musleabihf-4.53.2.tgz#b84634952604b950e18fa11fddebde898c5928d8"
+  integrity sha1-uEY0lSYEuVDhj6Ef3eveiYxZKNg=
 
 "@rollup/rollup-linux-arm64-gnu@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-arm64-gnu/download/@rollup/rollup-linux-arm64-gnu-4.52.4-3.tgz#31a6dc6a5221bc38769fd0f6e6e1ef46e0a8a68f"
-  integrity sha1-MabcalIhvDh2n9D25uHvRuCopo8=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-arm64-gnu/download/@rollup/rollup-linux-arm64-gnu-4.53.2.tgz#dad6f2fb41c2485f29a98e40e9bd78253255dbf3"
+  integrity sha1-2tby+0HCSF8pqY5A6b14JTJV2/M=
 
 "@rollup/rollup-linux-arm64-musl@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-arm64-musl/download/@rollup/rollup-linux-arm64-musl-4.52.4-3.tgz#3f3b317fe3bb1c9a254404a2c5dee7fe1a1f0241"
-  integrity sha1-Pzsxf+O7HJolRASixd7n/hofAkE=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-arm64-musl/download/@rollup/rollup-linux-arm64-musl-4.53.2.tgz#0f3f77c8ce9fbf982f8a8378b70a73dc6704a706"
+  integrity sha1-Dz93yM6fv5gvioN4twpz3GcEpwY=
 
 "@rollup/rollup-linux-loong64-gnu@4.53.2":
   version "4.53.2"
@@ -1920,59 +1932,64 @@
   integrity sha1-hwu5Tp2tKLsxJLpJvXM96qaqJjU=
 
 "@rollup/rollup-linux-ppc64-gnu@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-ppc64-gnu/download/@rollup/rollup-linux-ppc64-gnu-4.52.4-3.tgz#57ea852297f60823d334c69f8f4535d4a19570b5"
-  integrity sha1-V+qFIpf2CCPTNMafj0U11KGVcLU=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-ppc64-gnu/download/@rollup/rollup-linux-ppc64-gnu-4.53.2.tgz#188427d11abefc6c9926e3870b3e032170f5577c"
+  integrity sha1-GIQn0Rq+/GyZJuOHCz4DIXD1V3w=
 
 "@rollup/rollup-linux-riscv64-gnu@4.53.2":
-  version "4.53.1"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-riscv64-gnu/download/@rollup/rollup-linux-riscv64-gnu-4.53.1.tgz#f3c3d6523d246eef4aa1eed265f1ba31b9eef7c8"
-  integrity sha1-88PWUj0kbu9Koe7SZfG6Mbnu98g=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-riscv64-gnu/download/@rollup/rollup-linux-riscv64-gnu-4.53.2.tgz#9dec6eadbbb5abd3b76fe624dc4f006913ff4a7f"
+  integrity sha1-nexurbu1q9O3b+Yk3E8AaRP/Sn8=
 
 "@rollup/rollup-linux-riscv64-musl@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-riscv64-musl/download/@rollup/rollup-linux-riscv64-musl-4.52.4-3.tgz#2748f1a4f249908fc904ccc5a87d6125cd05577c"
-  integrity sha1-J0jxpPJJkI/JBMzFqH1hJc0FV3w=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-riscv64-musl/download/@rollup/rollup-linux-riscv64-musl-4.53.2.tgz#b26ba1c80b6f104dc5bd83ed83181fc0411a0c38"
+  integrity sha1-smuhyAtvEE3FvYPtgxgfwEEaDDg=
 
 "@rollup/rollup-linux-s390x-gnu@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-s390x-gnu/download/@rollup/rollup-linux-s390x-gnu-4.52.4-3.tgz#501691540d0ae2498dd5520c57c87a7f4686e1b3"
-  integrity sha1-UBaRVA0K4kmN1VIMV8h6f0aG4bM=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-s390x-gnu/download/@rollup/rollup-linux-s390x-gnu-4.53.2.tgz#dc83647189b68ad8d56a956a6fcaa4ee9c728190"
+  integrity sha1-3INkcYm2itjVapVqb8qk7pxygZA=
 
 "@rollup/rollup-linux-x64-gnu@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-x64-gnu/download/@rollup/rollup-linux-x64-gnu-4.52.4-3.tgz#eb6380fe000622bd76c00761a131880d7e2c31f1"
-  integrity sha1-62OA/gAGIr12wAdhoTGIDX4sMfE=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-x64-gnu/download/@rollup/rollup-linux-x64-gnu-4.53.2.tgz#42c3b8c94e9de37bd103cb2e26fb715118ef6459"
+  integrity sha1-QsO4yU6d43vRA8suJvtxURjvZFk=
 
 "@rollup/rollup-linux-x64-musl@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-x64-musl/download/@rollup/rollup-linux-x64-musl-4.52.4-3.tgz#70c31c66dcde09fad81a6679ce477ae8fd29ad65"
-  integrity sha1-cMMcZtzeCfrYGmZ5zkd66P0prWU=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-linux-x64-musl/download/@rollup/rollup-linux-x64-musl-4.53.2.tgz#d0e216ee1ea16bfafe35681b899b6a05258988e5"
+  integrity sha1-0OIW7h6ha/r+NWgbiZtqBSWJiOU=
 
 "@rollup/rollup-openharmony-arm64@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-openharmony-arm64/download/@rollup/rollup-openharmony-arm64-4.52.4-3.tgz#76d4f275ec63cb446a88c3d22c70e86fceca0614"
-  integrity sha1-dtTydexjy0RqiMPSLHDob87KBhQ=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-openharmony-arm64/download/@rollup/rollup-openharmony-arm64-4.53.2.tgz#3acd0157cb8976f659442bfd8a99aca46f8a2931"
+  integrity sha1-Os0BV8uJdvZZRCv9ipmspG+KKTE=
 
 "@rollup/rollup-win32-arm64-msvc@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-win32-arm64-msvc/download/@rollup/rollup-win32-arm64-msvc-4.52.4-3.tgz#0f662fe8f4abf59ec56928876bd2869f2011b6e7"
-  integrity sha1-D2Yv6PSr9Z7FaSiHa9KGnyARtuc=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-win32-arm64-msvc/download/@rollup/rollup-win32-arm64-msvc-4.53.2.tgz#3eb9e7d4d0e1d2e0850c4ee9aa2d0ddf89a8effa"
+  integrity sha1-Prnn1NDh0uCFDE7pqi0N34mo7/o=
 
 "@rollup/rollup-win32-ia32-msvc@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-win32-ia32-msvc/download/@rollup/rollup-win32-ia32-msvc-4.52.4-3.tgz#2e6bac55a4f7289704e10a8b125e10d684a20f6f"
-  integrity sha1-LmusVaT3KJcE4QqLEl4Q1oSiD28=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-win32-ia32-msvc/download/@rollup/rollup-win32-ia32-msvc-4.53.2.tgz#d69280bc6680fe19e0956e965811946d542f6365"
+  integrity sha1-1pKAvGaA/hnglW6WWBGUbVQvY2U=
 
 "@rollup/rollup-win32-x64-gnu@4.53.2":
-  version "4.52.5"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-win32-x64-gnu/download/@rollup/rollup-win32-x64-gnu-4.52.5.tgz#1a22acfc93c64a64a48c42672e857ee51774d0d3"
-  integrity sha1-GiKs/JPGSmSkjEJnLoV+5Rd00NM=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-win32-x64-gnu/download/@rollup/rollup-win32-x64-gnu-4.53.2.tgz#d182ce91e342bad9cbb8b284cf33ac542b126ead"
+  integrity sha1-0YLOkeNCutnLuLKEzzOsVCsSbq0=
 
 "@rollup/rollup-win32-x64-msvc@4.53.2":
-  version "4.52.4-3"
-  resolved "http://npm.eniot.io:7001/@rollup/rollup-win32-x64-msvc/download/@rollup/rollup-win32-x64-msvc-4.52.4-3.tgz#a3eb69410239d6fa7091b61d1b3cd2c5b065a1ce"
-  integrity sha1-o+tpQQI51vpwkbYdGzzSxbBloc4=
+  version "4.53.2"
+  resolved "http://npm.eniot.io:7001/@rollup/rollup-win32-x64-msvc/download/@rollup/rollup-win32-x64-msvc-4.53.2.tgz#d9ab606437fd072b2cb7df7e54bcdc7f1ccbe8b4"
+  integrity sha1-2atgZDf9Bysst99+VLzcfxzL6LQ=
+
+"@sinclair/typebox@^0.27.8":
+  version "0.27.8"
+  resolved "http://npm.eniot.io:7001/@sinclair/typebox/download/@sinclair/typebox-0.27.8.tgz"
+  integrity sha1-Zmf6wWxDa1Q0o4ejTe2wExmPbm4=
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
@@ -2236,7 +2253,7 @@
   resolved "https://registry.npm.taobao.org/@types/eslint-visitor-keys/download/@types/eslint-visitor-keys-1.0.0.tgz"
   integrity sha1-HuMNeVRMqE1o1LPNsK9PIFZj3S0=
 
-"@types/estree@1.0.8":
+"@types/estree@1.0.8", "@types/estree@^1.0.0":
   version "1.0.8"
   resolved "http://npm.eniot.io:7001/@types/estree/download/@types/estree-1.0.8.tgz"
   integrity sha1-lYuRyZGxhnztMYvt6g4hXuBQcm4=
@@ -3563,6 +3580,50 @@
   resolved "http://npm.eniot.io:7001/@vitejs/plugin-vue/download/@vitejs/plugin-vue-5.2.4.tgz"
   integrity sha1-nopRLrF0v8KjM7qVm7+d5CjYmtg=
 
+"@vitest/expect@1.6.0":
+  version "1.6.0"
+  resolved "http://npm.eniot.io:7001/@vitest/expect/download/@vitest/expect-1.6.0.tgz"
+  integrity sha1-CzugkU9zhQhGSYP02BG8EitR+zA=
+  dependencies:
+    "@vitest/spy" "1.6.0"
+    "@vitest/utils" "1.6.0"
+    chai "^4.3.10"
+
+"@vitest/runner@1.6.0":
+  version "1.6.0"
+  resolved "http://npm.eniot.io:7001/@vitest/runner/download/@vitest/runner-1.6.0.tgz"
+  integrity sha1-pt5JqWyzOw47oNkGSj6NbOLwiCU=
+  dependencies:
+    "@vitest/utils" "1.6.0"
+    p-limit "^5.0.0"
+    pathe "^1.1.1"
+
+"@vitest/snapshot@1.6.0":
+  version "1.6.0"
+  resolved "http://npm.eniot.io:7001/@vitest/snapshot/download/@vitest/snapshot-1.6.0.tgz"
+  integrity sha1-3rfkSYpSmcEZgTb1bm4PaS5q9HA=
+  dependencies:
+    magic-string "^0.30.5"
+    pathe "^1.1.1"
+    pretty-format "^29.7.0"
+
+"@vitest/spy@1.6.0":
+  version "1.6.0"
+  resolved "http://npm.eniot.io:7001/@vitest/spy/download/@vitest/spy-1.6.0.tgz"
+  integrity sha1-Niy9QszbA/FhN5j96ZeZZJUWkG0=
+  dependencies:
+    tinyspy "^2.2.0"
+
+"@vitest/utils@1.6.0":
+  version "1.6.0"
+  resolved "http://npm.eniot.io:7001/@vitest/utils/download/@vitest/utils-1.6.0.tgz"
+  integrity sha1-XFZ1yn1vVGp7QzfemuiC5sV4lqE=
+  dependencies:
+    diff-sequences "^29.6.3"
+    estree-walker "^3.0.3"
+    loupe "^2.3.7"
+    pretty-format "^29.7.0"
+
 "@volar/language-core@1.11.1", "@volar/language-core@~1.11.1":
   version "1.11.1"
   resolved "http://npm.eniot.io:7001/@volar/language-core/download/@volar/language-core-1.11.1.tgz"
@@ -3708,6 +3769,14 @@
   version "3.5.24"
   resolved "http://npm.eniot.io:7001/@vue/shared/download/@vue/shared-3.5.24.tgz"
   integrity sha1-ReqebgN+U8+4FB/6a8rXW4vhHpw=
+
+"@vue/test-utils@^2.4.0-alpha.2":
+  version "2.4.0-alpha.2"
+  resolved "http://npm.eniot.io:7001/@vue/test-utils/download/@vue/test-utils-2.4.0-alpha.2.tgz"
+  integrity sha1-zDCZi/VUR4e/DEnIkxc62/fpFQk=
+  dependencies:
+    js-beautify "1.14.6"
+    vue-component-type-helpers "1.6.5"
 
 "@vue/tsconfig@^0.5.0":
   version "0.5.1"
@@ -3896,6 +3965,11 @@ abab@^2.0.0:
   resolved "https://registry.npm.taobao.org/abab/download/abab-2.0.3.tgz"
   integrity sha1-Yj4gdeAustPyR15J+ZyRhGRnkHo=
 
+abbrev@^1.0.0:
+  version "1.1.1"
+  resolved "http://npm.eniot.io:7001/abbrev/download/abbrev-1.1.1.tgz"
+  integrity sha1-+PLIh60Qv2f2NPAFtph/7TF5qsg=
+
 accepts@~1.3.5, accepts@~1.3.7:
   version "1.3.7"
   resolved "https://registry.npm.taobao.org/accepts/download/accepts-1.3.7.tgz"
@@ -3934,6 +4008,13 @@ acorn-walk@^6.0.1, acorn-walk@^6.1.1:
   resolved "https://registry.npm.taobao.org/acorn-walk/download/acorn-walk-6.2.0.tgz?cache=0&sync_timestamp=1592373515240&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Facorn-walk%2Fdownload%2Facorn-walk-6.2.0.tgz"
   integrity sha1-Ejy487hMIXHx9/slJhWxx4prGow=
 
+acorn-walk@^8.3.2:
+  version "8.3.4"
+  resolved "http://npm.eniot.io:7001/acorn-walk/download/acorn-walk-8.3.4.tgz"
+  integrity sha1-eU3RacOXft9LpOpHWDWHxYZiNrc=
+  dependencies:
+    acorn "^8.11.0"
+
 acorn@^3.1.0:
   version "3.3.0"
   resolved "https://registry.npm.taobao.org/acorn/download/acorn-3.3.0.tgz?cache=0&sync_timestamp=1591869418361&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Facorn%2Fdownload%2Facorn-3.3.0.tgz"
@@ -3953,6 +4034,11 @@ acorn@^7.1.0, acorn@^7.1.1, acorn@^7.2.0:
   version "7.3.1"
   resolved "https://registry.npm.taobao.org/acorn/download/acorn-7.3.1.tgz?cache=0&sync_timestamp=1591869431317&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Facorn%2Fdownload%2Facorn-7.3.1.tgz"
   integrity sha1-hQEHVNtTw/uvO56j4IOqXF0Uf/0=
+
+acorn@^8.11.0, acorn@^8.15.0:
+  version "8.15.0"
+  resolved "http://npm.eniot.io:7001/acorn/download/acorn-8.15.0.tgz"
+  integrity sha1-o2CJi8QV7arEbIJB9jg5dbkwuBY=
 
 add-dom-event-listener@^1.1.0:
   version "1.1.0"
@@ -4093,6 +4179,11 @@ ansi-styles@^4.0.0, ansi-styles@^4.1.0:
   dependencies:
     "@types/color-name" "^1.1.1"
     color-convert "^2.0.1"
+
+ansi-styles@^5.0.0:
+  version "5.2.0"
+  resolved "http://npm.eniot.io:7001/ansi-styles/download/ansi-styles-5.2.0.tgz"
+  integrity sha1-B0SWkK1Fd30ZJKwquy/IiV26g2s=
 
 ansicolors@~0.3.2:
   version "0.3.2"
@@ -4499,6 +4590,11 @@ assert@^1.1.1:
   dependencies:
     object-assign "^4.1.1"
     util "0.10.3"
+
+assertion-error@^1.1.0:
+  version "1.1.0"
+  resolved "http://npm.eniot.io:7001/assertion-error/download/assertion-error-1.1.0.tgz"
+  integrity sha1-5gtrDo8wG9l+U3UhW9pAbIURjAs=
 
 assign-symbols@^1.0.0:
   version "1.0.0"
@@ -5200,6 +5296,11 @@ bytes@3.1.0:
   resolved "https://registry.npm.taobao.org/bytes/download/bytes-3.1.0.tgz"
   integrity sha1-9s95M6Ng4FiPqf3oVlHNx/gF0fY=
 
+cac@^6.7.14:
+  version "6.7.14"
+  resolved "http://npm.eniot.io:7001/cac/download/cac-6.7.14.tgz"
+  integrity sha1-gE4eb1Bu42PLDjzLsJytXdmHCVk=
+
 cacache@^12.0.2, cacache@^12.0.3:
   version "12.0.4"
   resolved "https://registry.npm.taobao.org/cacache/download/cacache-12.0.4.tgz"
@@ -5382,6 +5483,19 @@ center-align@^0.1.1:
     align-text "^0.1.3"
     lazy-cache "^1.0.3"
 
+chai@^4.3.10:
+  version "4.5.0"
+  resolved "http://npm.eniot.io:7001/chai/download/chai-4.5.0.tgz"
+  integrity sha1-cH5Jkjr92bE6iwtH0z1zLROBL9g=
+  dependencies:
+    assertion-error "^1.1.0"
+    check-error "^1.0.3"
+    deep-eql "^4.1.3"
+    get-func-name "^2.0.2"
+    loupe "^2.3.6"
+    pathval "^1.1.1"
+    type-detect "^4.1.0"
+
 chalk@2.4.2, chalk@^2.0.0, chalk@^2.0.1, chalk@^2.1.0, chalk@^2.3.2, chalk@^2.4.1, chalk@^2.4.2:
   version "2.4.2"
   resolved "https://registry.npm.taobao.org/chalk/download/chalk-2.4.2.tgz?cache=0&sync_timestamp=1591686984650&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fchalk%2Fdownload%2Fchalk-2.4.2.tgz"
@@ -5454,6 +5568,13 @@ chardet@^0.7.0:
   version "0.7.0"
   resolved "https://registry.npm.taobao.org/chardet/download/chardet-0.7.0.tgz?cache=0&sync_timestamp=1594010705529&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fchardet%2Fdownload%2Fchardet-0.7.0.tgz"
   integrity sha1-kAlISfCTfy7twkJdDSip5fDLrZ4=
+
+check-error@^1.0.3:
+  version "1.0.3"
+  resolved "http://npm.eniot.io:7001/check-error/download/check-error-1.0.3.tgz"
+  integrity sha1-plAuQxKn7pafZG6Duz3dVigb1pQ=
+  dependencies:
+    get-func-name "^2.0.2"
 
 check-types@^8.0.3:
   version "8.0.3"
@@ -5967,10 +6088,15 @@ conf@^6.2.1:
     semver "^6.2.0"
     write-file-atomic "^3.0.0"
 
-config-chain@^1.1.11:
-  version "1.1.12"
-  resolved "https://registry.npm.taobao.org/config-chain/download/config-chain-1.1.12.tgz"
-  integrity sha1-D96NCRIA616AjK8l/mGMAvSOTvo=
+confbox@^0.1.8:
+  version "0.1.8"
+  resolved "http://npm.eniot.io:7001/confbox/download/confbox-0.1.8.tgz"
+  integrity sha1-gg1z07PILZvZEGUsXU1Znvj/iwY=
+
+config-chain@^1.1.11, config-chain@^1.1.13:
+  version "1.1.13"
+  resolved "http://npm.eniot.io:7001/config-chain/download/config-chain-1.1.13.tgz"
+  integrity sha1-+tB5Wqamza/57Rto6d/5Q3LCMvQ=
   dependencies:
     ini "^1.3.4"
     proto-list "~1.2.1"
@@ -6224,7 +6350,7 @@ cross-spawn@6.0.5, cross-spawn@^6.0.0, cross-spawn@^6.0.5:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
-cross-spawn@7.0.3, cross-spawn@^7.0.0, cross-spawn@^7.0.1, cross-spawn@^7.0.2:
+cross-spawn@7.0.3, cross-spawn@^7.0.0, cross-spawn@^7.0.1, cross-spawn@^7.0.2, cross-spawn@^7.0.3:
   version "7.0.3"
   resolved "https://registry.npm.taobao.org/cross-spawn/download/cross-spawn-7.0.3.tgz"
   integrity sha1-9zqFudXUHQRVUcF34ogtSshXKKY=
@@ -6620,6 +6746,13 @@ debug@^4.2.0:
   dependencies:
     ms "2.1.2"
 
+debug@^4.3.4:
+  version "4.4.3"
+  resolved "http://npm.eniot.io:7001/debug/download/debug-4.4.3.tgz"
+  integrity sha1-xq5DLZvZZiWC/OCHCbA4xY6ePWo=
+  dependencies:
+    ms "^2.1.3"
+
 decamelize-keys@^1.0.0, decamelize-keys@^1.1.0:
   version "1.1.0"
   resolved "https://registry.npm.taobao.org/decamelize-keys/download/decamelize-keys-1.1.0.tgz"
@@ -6656,6 +6789,13 @@ dedent@^0.7.0:
   version "0.7.0"
   resolved "https://registry.npm.taobao.org/dedent/download/dedent-0.7.0.tgz"
   integrity sha1-JJXduvbrh0q7Dhvp3yLS5aVEMmw=
+
+deep-eql@^4.1.3:
+  version "4.1.4"
+  resolved "http://npm.eniot.io:7001/deep-eql/download/deep-eql-4.1.4.tgz"
+  integrity sha1-0NORKGWRG7j6xa+046z6aijccrc=
+  dependencies:
+    type-detect "^4.0.0"
 
 deep-extend@^0.6.0:
   version "0.6.0"
@@ -6786,6 +6926,11 @@ diff-sequences@^25.2.6:
   version "25.2.6"
   resolved "https://registry.npm.taobao.org/diff-sequences/download/diff-sequences-25.2.6.tgz"
   integrity sha1-X0Z8AO3TU1K3vKRteSfWDmh6dt0=
+
+diff-sequences@^29.6.3:
+  version "29.6.3"
+  resolved "http://npm.eniot.io:7001/diff-sequences/download/diff-sequences-29.6.3.tgz"
+  integrity sha1-Ter4lNEUB8Ue/IQYAS+ecLhOqSE=
 
 diffie-hellman@^5.0.0:
   version "5.0.3"
@@ -7038,6 +7183,16 @@ ecc-jsbn@~0.1.1:
   dependencies:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
+
+editorconfig@^0.15.3:
+  version "0.15.3"
+  resolved "http://npm.eniot.io:7001/editorconfig/download/editorconfig-0.15.3.tgz"
+  integrity sha1-vvhMTnX7jcsM5c7o79UcFZmb78U=
+  dependencies:
+    commander "^2.19.0"
+    lru-cache "^4.1.5"
+    semver "^5.6.0"
+    sigmund "^1.0.1"
 
 ee-first@1.1.1:
   version "1.1.1"
@@ -7983,6 +8138,13 @@ estree-walker@^2.0.2:
   resolved "http://npm.eniot.io:7001/estree-walker/download/estree-walker-2.0.2.tgz"
   integrity sha1-UvAQF4wqTBF6d1fP6UKtt9LaTKw=
 
+estree-walker@^3.0.3:
+  version "3.0.3"
+  resolved "http://npm.eniot.io:7001/estree-walker/download/estree-walker-3.0.3.tgz"
+  integrity sha1-Z8PlSexAKkh7T8GT0ZU6UkdSNA0=
+  dependencies:
+    "@types/estree" "^1.0.0"
+
 esutils@^2.0.2:
   version "2.0.3"
   resolved "https://registry.npm.taobao.org/esutils/download/esutils-2.0.3.tgz"
@@ -8074,6 +8236,21 @@ execa@^3.2.0:
     p-finally "^2.0.0"
     signal-exit "^3.0.2"
     strip-final-newline "^2.0.0"
+
+execa@^8.0.1:
+  version "8.0.1"
+  resolved "http://npm.eniot.io:7001/execa/download/execa-8.0.1.tgz"
+  integrity sha1-UfallDtYD5Y8PKnGMheW24zDm4w=
+  dependencies:
+    cross-spawn "^7.0.3"
+    get-stream "^8.0.1"
+    human-signals "^5.0.0"
+    is-stream "^3.0.0"
+    merge-stream "^2.0.0"
+    npm-run-path "^5.1.0"
+    onetime "^6.0.0"
+    signal-exit "^4.1.0"
+    strip-final-newline "^3.0.0"
 
 execall@^1.0.0:
   version "1.0.0"
@@ -8249,6 +8426,13 @@ extsprintf@^1.2.0:
   version "1.4.0"
   resolved "https://registry.npm.taobao.org/extsprintf/download/extsprintf-1.4.0.tgz"
   integrity sha1-4mifjzVvrWLMplo6kcXfX5VRaS8=
+
+fast-check@^4.2.0:
+  version "4.2.0"
+  resolved "http://npm.eniot.io:7001/fast-check/download/fast-check-4.2.0.tgz"
+  integrity sha1-25FJwHO0fWCrN3eR6Yp9Go8ojAg=
+  dependencies:
+    pure-rand "^7.0.0"
 
 fast-deep-equal@3.1.1:
   version "3.1.1"
@@ -8780,6 +8964,11 @@ get-caller-file@^2.0.1:
   resolved "https://registry.npm.taobao.org/get-caller-file/download/get-caller-file-2.0.5.tgz"
   integrity sha1-T5RBKoLbMvNuOwuXQfipf+sDH34=
 
+get-func-name@^2.0.1, get-func-name@^2.0.2:
+  version "2.0.2"
+  resolved "http://npm.eniot.io:7001/get-func-name/download/get-func-name-2.0.2.tgz"
+  integrity sha1-DXzyDNE/2oCGaf+oj0/8ejlD/EE=
+
 get-own-enumerable-property-symbols@^3.0.0:
   version "3.0.2"
   resolved "https://registry.npm.taobao.org/get-own-enumerable-property-symbols/download/get-own-enumerable-property-symbols-3.0.2.tgz?cache=0&sync_timestamp=1575993577501&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fget-own-enumerable-property-symbols%2Fdownload%2Fget-own-enumerable-property-symbols-3.0.2.tgz"
@@ -8818,6 +9007,11 @@ get-stream@^5.0.0, get-stream@^5.1.0:
   integrity sha1-ASA83JJZf5uQkGfD5lbMH008Tck=
   dependencies:
     pump "^3.0.0"
+
+get-stream@^8.0.1:
+  version "8.0.1"
+  resolved "http://npm.eniot.io:7001/get-stream/download/get-stream-8.0.1.tgz"
+  integrity sha1-3vnf1xdCzXdUp3Ye1DdJon0C7KI=
 
 get-value@^2.0.3, get-value@^2.0.6:
   version "2.0.6"
@@ -8902,6 +9096,17 @@ glob@7.1.6, glob@^7.0.3, glob@^7.1.1, glob@^7.1.2, glob@^7.1.3, glob@^7.1.4, glo
     minimatch "^3.0.4"
     once "^1.3.0"
     path-is-absolute "^1.0.0"
+
+glob@^8.0.3:
+  version "8.1.0"
+  resolved "http://npm.eniot.io:7001/glob/download/glob-8.1.0.tgz"
+  integrity sha1-04j2Vlk+9wjuPjRkD9+5mp/Rwz4=
+  dependencies:
+    fs.realpath "^1.0.0"
+    inflight "^1.0.4"
+    inherits "2"
+    minimatch "^5.0.1"
+    once "^1.3.0"
 
 global-agent@^2.0.2:
   version "2.1.12"
@@ -9130,6 +9335,15 @@ handle-thing@^2.0.0:
   version "2.0.1"
   resolved "https://registry.npm.taobao.org/handle-thing/download/handle-thing-2.0.1.tgz"
   integrity sha1-hX95zjWVgMNA1DCBzGSJcNC7I04=
+
+happy-dom@^15.7.4:
+  version "15.7.4"
+  resolved "http://npm.eniot.io:7001/happy-dom/download/happy-dom-15.7.4.tgz"
+  integrity sha1-BareWcHTBzNgAbcATHbfxqgp8iA=
+  dependencies:
+    entities "^4.5.0"
+    webidl-conversions "^7.0.0"
+    whatwg-mimetype "^3.0.0"
 
 har-schema@^2.0.0:
   version "2.0.0"
@@ -9466,6 +9680,11 @@ human-signals@^1.1.1:
   version "1.1.1"
   resolved "https://registry.npm.taobao.org/human-signals/download/human-signals-1.1.1.tgz"
   integrity sha1-xbHNFPUK6uCatsWf5jujOV/k36M=
+
+human-signals@^5.0.0:
+  version "5.0.0"
+  resolved "http://npm.eniot.io:7001/human-signals/download/human-signals-5.0.0.tgz"
+  integrity sha1-QmZaKE+a4NreO6QevDfrS4UvOig=
 
 humanize-url@^1.0.0:
   version "1.0.1"
@@ -9832,6 +10051,14 @@ invert-kv@^3.0.0:
   resolved "https://registry.npm.taobao.org/invert-kv/download/invert-kv-3.0.1.tgz"
   integrity sha1-qTx6PUOGodyDJbl9qbsWIMAoJSM=
 
+ip-address@^9.0.5:
+  version "9.0.5"
+  resolved "http://npm.eniot.io:7001/ip-address/download/ip-address-9.0.5.tgz"
+  integrity sha1-EXqWCBmwh4DDvR8U7zwcwdPz6lo=
+  dependencies:
+    jsbn "1.1.0"
+    sprintf-js "^1.1.3"
+
 ip-regex@^2.1.0:
   version "2.1.0"
   resolved "https://registry.npm.taobao.org/ip-regex/download/ip-regex-2.1.0.tgz"
@@ -10193,6 +10420,11 @@ is-stream@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npm.taobao.org/is-stream/download/is-stream-2.0.0.tgz"
   integrity sha1-venDJoDW+uBBKdasnZIc54FfeOM=
+
+is-stream@^3.0.0:
+  version "3.0.0"
+  resolved "http://npm.eniot.io:7001/is-stream/download/is-stream-3.0.0.tgz"
+  integrity sha1-5r/XqmvvafT0cs6btoHj5XtDGaw=
 
 is-string@^1.0.5:
   version "1.0.5"
@@ -10864,6 +11096,16 @@ joi2types@~1.0.7:
     "@types/json-schema" "^7.0.4"
     json-schema-to-typescript "^8.2.0"
 
+js-beautify@1.14.6:
+  version "1.14.6"
+  resolved "http://npm.eniot.io:7001/js-beautify/download/js-beautify-1.14.6.tgz"
+  integrity sha1-sjyl10pGLCgsdxG7URULzJfytQc=
+  dependencies:
+    config-chain "^1.1.13"
+    editorconfig "^0.15.3"
+    glob "^8.0.3"
+    nopt "^6.0.0"
+
 js-stringify@^1.0.1:
   version "1.0.2"
   resolved "https://registry.npm.taobao.org/js-stringify/download/js-stringify-1.0.2.tgz"
@@ -10879,6 +11121,11 @@ js-tokens@^3.0.2:
   resolved "https://registry.npm.taobao.org/js-tokens/download/js-tokens-3.0.2.tgz"
   integrity sha1-mGbfOVECEw449/mWvOtlRDIJwls=
 
+js-tokens@^9.0.1:
+  version "9.0.1"
+  resolved "http://npm.eniot.io:7001/js-tokens/download/js-tokens-9.0.1.tgz"
+  integrity sha1-LsQ5ZGWENSlvZ2GzThBnHC2VJ/Q=
+
 js-yaml@^3.12.1, js-yaml@^3.13.0, js-yaml@^3.13.1, js-yaml@^3.14.0:
   version "3.14.0"
   resolved "https://registry.npm.taobao.org/js-yaml/download/js-yaml-3.14.0.tgz"
@@ -10886,6 +11133,11 @@ js-yaml@^3.12.1, js-yaml@^3.13.0, js-yaml@^3.13.1, js-yaml@^3.14.0:
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
+
+jsbn@1.1.0:
+  version "1.1.0"
+  resolved "http://npm.eniot.io:7001/jsbn/download/jsbn-1.1.0.tgz"
+  integrity sha1-sBMHyym2GKHtJux56RH4A8TaAEA=
 
 jsbn@~0.1.0:
   version "0.1.1"
@@ -11399,6 +11651,14 @@ loader-utils@^2.0.0:
     emojis-list "^3.0.0"
     json5 "^2.1.2"
 
+local-pkg@^0.5.0:
+  version "0.5.1"
+  resolved "http://npm.eniot.io:7001/local-pkg/download/local-pkg-0.5.1.tgz"
+  integrity sha1-aWWGONKpUodTTUwv/3V5gBANu20=
+  dependencies:
+    mlly "^1.7.3"
+    pkg-types "^1.2.1"
+
 localforage@^1.3.0:
   version "1.7.4"
   resolved "https://registry.npm.taobao.org/localforage/download/localforage-1.7.4.tgz"
@@ -11661,6 +11921,13 @@ loud-rejection@^1.0.0:
     currently-unhandled "^0.4.1"
     signal-exit "^3.0.0"
 
+loupe@^2.3.6, loupe@^2.3.7:
+  version "2.3.7"
+  resolved "http://npm.eniot.io:7001/loupe/download/loupe-2.3.7.tgz"
+  integrity sha1-bmm31Nt9OrQ2MoAT030cjDVAxpc=
+  dependencies:
+    get-func-name "^2.0.1"
+
 lowercase-keys@^1.0.0, lowercase-keys@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/lowercase-keys/download/lowercase-keys-1.0.1.tgz"
@@ -11670,6 +11937,14 @@ lowercase-keys@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npm.taobao.org/lowercase-keys/download/lowercase-keys-2.0.0.tgz"
   integrity sha1-JgPni3tLAAbLyi+8yKMgJVislHk=
+
+lru-cache@^4.1.5:
+  version "4.1.5"
+  resolved "http://npm.eniot.io:7001/lru-cache/download/lru-cache-4.1.5.tgz"
+  integrity sha1-i75Q6oW+1ZvJ4z3KuCNe6bz0Q80=
+  dependencies:
+    pseudomap "^1.0.2"
+    yallist "^2.1.2"
 
 lru-cache@^5.1.1:
   version "5.1.1"
@@ -11690,7 +11965,7 @@ macaddress@0.2.9:
   resolved "https://registry.npm.taobao.org/macaddress/download/macaddress-0.2.9.tgz"
   integrity sha1-NXm4uazVuWtFU6vw85QYWoaBPLM=
 
-magic-string@^0.30.21:
+magic-string@^0.30.21, magic-string@^0.30.5:
   version "0.30.21"
   resolved "http://npm.eniot.io:7001/magic-string/download/magic-string-0.30.21.tgz"
   integrity sha1-VnY+wJoPqAkd8nh5/ZTRkHjADZE=
@@ -12070,6 +12345,11 @@ mimic-fn@^2.1.0:
   resolved "https://registry.npm.taobao.org/mimic-fn/download/mimic-fn-2.1.0.tgz"
   integrity sha1-ftLCzMyvhNP/y3pptXcR/CCDQBs=
 
+mimic-fn@^4.0.0:
+  version "4.0.0"
+  resolved "http://npm.eniot.io:7001/mimic-fn/download/mimic-fn-4.0.0.tgz"
+  integrity sha1-YKkFUNXLCyOcymXYk7GlOymHHsw=
+
 mimic-response@^1.0.0, mimic-response@^1.0.1:
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/mimic-response/download/mimic-response-1.0.1.tgz?cache=0&sync_timestamp=1589481629775&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fmimic-response%2Fdownload%2Fmimic-response-1.0.1.tgz"
@@ -12138,6 +12418,13 @@ minimatch@3.0.4, minimatch@^3.0.4:
   integrity sha1-UWbihkV/AzBgZL5Ul+jbsMPTIIM=
   dependencies:
     brace-expansion "^1.1.7"
+
+minimatch@^5.0.1:
+  version "5.1.6"
+  resolved "http://npm.eniot.io:7001/minimatch/download/minimatch-5.1.6.tgz"
+  integrity sha1-HPy4z1Ui6mmVLNKvla4JR38SKpY=
+  dependencies:
+    brace-expansion "^2.0.1"
 
 minimatch@^9.0.3:
   version "9.0.5"
@@ -12229,6 +12516,16 @@ mkdirp@1.0.4, mkdirp@^1.0.0:
   resolved "https://registry.npm.taobao.org/mkdirp/download/mkdirp-1.0.4.tgz?cache=0&sync_timestamp=1587535418745&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fmkdirp%2Fdownload%2Fmkdirp-1.0.4.tgz"
   integrity sha1-PrXtYmInVteaXw4qIh3+utdcL34=
 
+mlly@^1.7.3, mlly@^1.7.4:
+  version "1.8.0"
+  resolved "http://npm.eniot.io:7001/mlly/download/mlly-1.8.0.tgz"
+  integrity sha1-4HRhK5OK+Ouh6vQymcvInLctgk4=
+  dependencies:
+    acorn "^8.15.0"
+    pathe "^2.0.3"
+    pkg-types "^1.3.1"
+    ufo "^1.6.1"
+
 mockjs@^1.0.1-beta3:
   version "1.1.0"
   resolved "https://registry.npm.taobao.org/mockjs/download/mockjs-1.1.0.tgz"
@@ -12272,6 +12569,11 @@ ms@2.1.2, ms@^2.1.1:
   version "2.1.2"
   resolved "https://registry.npm.taobao.org/ms/download/ms-2.1.2.tgz"
   integrity sha1-0J0fNXtEP0kzgqjrPM0YOHKuYAk=
+
+ms@^2.1.3:
+  version "2.1.3"
+  resolved "http://npm.eniot.io:7001/ms/download/ms-2.1.3.tgz"
+  integrity sha1-V0yBOM4dK1hh8LRFedut1gxmFbI=
 
 muggle-string@^0.3.1:
   version "0.3.1"
@@ -12544,6 +12846,13 @@ node-releases@^1.1.13, node-releases@^1.1.58:
   resolved "https://registry.npm.taobao.org/node-releases/download/node-releases-1.1.58.tgz?cache=0&sync_timestamp=1591162281879&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fnode-releases%2Fdownload%2Fnode-releases-1.1.58.tgz"
   integrity sha1-juIO7zD6YOUnVfzAlC3vWnNP6TU=
 
+nopt@^6.0.0:
+  version "6.0.0"
+  resolved "http://npm.eniot.io:7001/nopt/download/nopt-6.0.0.tgz"
+  integrity sha1-JFgB2Ov0CcbfIqudlbZeEwnNsW0=
+  dependencies:
+    abbrev "^1.0.0"
+
 normalize-package-data@^2.3.2, normalize-package-data@^2.3.4, normalize-package-data@^2.5.0:
   version "2.5.0"
   resolved "https://registry.npm.taobao.org/normalize-package-data/download/normalize-package-data-2.5.0.tgz"
@@ -12627,6 +12936,13 @@ npm-run-path@^4.0.0:
   integrity sha1-t+zR5e1T2o43pV4cImnguX7XSOo=
   dependencies:
     path-key "^3.0.0"
+
+npm-run-path@^5.1.0:
+  version "5.3.0"
+  resolved "http://npm.eniot.io:7001/npm-run-path/download/npm-run-path-5.3.0.tgz"
+  integrity sha1-4jNT0Ou5MX8XTpNBfkpNgtAknp8=
+  dependencies:
+    path-key "^4.0.0"
 
 nth-check@^1.0.2, nth-check@~1.0.1:
   version "1.0.2"
@@ -12787,6 +13103,13 @@ onetime@^5.1.0:
   integrity sha1-//DzyRYX/mK7UBiWNumayKbfe+U=
   dependencies:
     mimic-fn "^2.1.0"
+
+onetime@^6.0.0:
+  version "6.0.0"
+  resolved "http://npm.eniot.io:7001/onetime/download/onetime-6.0.0.tgz"
+  integrity sha1-fCTBjtH9LpvKS9JoBqM2E8d9NLQ=
+  dependencies:
+    mimic-fn "^4.0.0"
 
 ono@^4.0.11:
   version "4.0.11"
@@ -12951,6 +13274,13 @@ p-limit@^2.0.0, p-limit@^2.2.0, p-limit@^2.2.1:
   integrity sha1-PdM8ZHohT9//2DWTPrCG2g3CHbE=
   dependencies:
     p-try "^2.0.0"
+
+p-limit@^5.0.0:
+  version "5.0.0"
+  resolved "http://npm.eniot.io:7001/p-limit/download/p-limit-5.0.0.tgz"
+  integrity sha1-aUbVtxQLZJt6M6An2JtMYls6WYU=
+  dependencies:
+    yocto-queue "^1.0.0"
 
 p-locate@^2.0.0:
   version "2.0.0"
@@ -13179,6 +13509,11 @@ path-key@^3.0.0, path-key@^3.1.0:
   resolved "https://registry.npm.taobao.org/path-key/download/path-key-3.1.1.tgz"
   integrity sha1-WB9q3mWMu6ZaDTOA3ndTKVBU83U=
 
+path-key@^4.0.0:
+  version "4.0.0"
+  resolved "http://npm.eniot.io:7001/path-key/download/path-key-4.0.0.tgz"
+  integrity sha1-KVWI3DruZBVPh3rbnXgLgcVUvxg=
+
 path-parse@^1.0.6:
   version "1.0.6"
   resolved "https://registry.npm.taobao.org/path-parse/download/path-parse-1.0.6.tgz"
@@ -13220,6 +13555,21 @@ path-type@^4.0.0:
   resolved "https://registry.npm.taobao.org/path-type/download/path-type-4.0.0.tgz"
   integrity sha1-hO0BwKe6OAr+CdkKjBgNzZ0DBDs=
 
+pathe@^1.1.1:
+  version "1.1.2"
+  resolved "http://npm.eniot.io:7001/pathe/download/pathe-1.1.2.tgz"
+  integrity sha1-bEy0epRWkuSKHd1uQJTRcFFkN+w=
+
+pathe@^2.0.1, pathe@^2.0.3:
+  version "2.0.3"
+  resolved "http://npm.eniot.io:7001/pathe/download/pathe-2.0.3.tgz"
+  integrity sha1-PsvsVUIWhbcKnahyss/z4cvtFxY=
+
+pathval@^1.1.1:
+  version "1.1.1"
+  resolved "http://npm.eniot.io:7001/pathval/download/pathval-1.1.1.tgz"
+  integrity sha1-hTTnenfOesWiUS6iHg/bj89sPY0=
+
 pbkdf2@^3.0.3:
   version "3.1.1"
   resolved "https://registry.npm.taobao.org/pbkdf2/download/pbkdf2-3.1.1.tgz?cache=0&sync_timestamp=1591275684229&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fpbkdf2%2Fdownload%2Fpbkdf2-3.1.1.tgz"
@@ -13241,7 +13591,7 @@ performance-now@^2.1.0:
   resolved "https://registry.npm.taobao.org/performance-now/download/performance-now-2.1.0.tgz"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
-picocolors@^1.1.1:
+picocolors@^1.0.0, picocolors@^1.1.1:
   version "1.1.1"
   resolved "http://npm.eniot.io:7001/picocolors/download/picocolors-1.1.1.tgz"
   integrity sha1-PTIa8+q5ObCDyPkpodEs2oHCa2s=
@@ -13321,6 +13671,15 @@ pkg-dir@^4.1.0, pkg-dir@^4.2.0:
   integrity sha1-8JkTPfft5CLoHR2ESCcO6z5CYfM=
   dependencies:
     find-up "^4.0.0"
+
+pkg-types@^1.2.1, pkg-types@^1.3.1:
+  version "1.3.1"
+  resolved "http://npm.eniot.io:7001/pkg-types/download/pkg-types-1.3.1.tgz"
+  integrity sha1-vXzHCIEZJ3fu9TJsGd60bokJF98=
+  dependencies:
+    confbox "^0.1.8"
+    mlly "^1.7.4"
+    pathe "^2.0.1"
 
 pkg-up@2.0.0:
   version "2.0.0"
@@ -14201,6 +14560,15 @@ pretty-format@^25.2.1, pretty-format@^25.5.0:
     ansi-styles "^4.0.0"
     react-is "^16.12.0"
 
+pretty-format@^29.7.0:
+  version "29.7.0"
+  resolved "http://npm.eniot.io:7001/pretty-format/download/pretty-format-29.7.0.tgz"
+  integrity sha1-ykLHWDEPNlv6caC9oKgHFgt3aBI=
+  dependencies:
+    "@jest/schemas" "^29.6.3"
+    ansi-styles "^5.0.0"
+    react-is "^18.0.0"
+
 pretty-time@^1.1.0:
   version "1.1.0"
   resolved "https://registry.npm.taobao.org/pretty-time/download/pretty-time-1.1.0.tgz"
@@ -14289,6 +14657,11 @@ prr@~1.0.1:
   version "1.0.1"
   resolved "https://registry.npm.taobao.org/prr/download/prr-1.0.1.tgz"
   integrity sha1-0/wRS6BplaRexok/SEzrHXj19HY=
+
+pseudomap@^1.0.2:
+  version "1.0.2"
+  resolved "http://npm.eniot.io:7001/pseudomap/download/pseudomap-1.0.2.tgz"
+  integrity sha1-8FKijacOYYkX7wqKw0wa5aaChrM=
 
 psl@^1.1.28:
   version "1.8.0"
@@ -14493,6 +14866,11 @@ pure-color@^1.2.0:
   version "1.3.0"
   resolved "https://registry.npm.taobao.org/pure-color/download/pure-color-1.3.0.tgz"
   integrity sha1-H+Bk+wrIUfDeYTIKi/eWg2Qi8z4=
+
+pure-rand@^7.0.0:
+  version "7.0.1"
+  resolved "http://npm.eniot.io:7001/pure-rand/download/pure-rand-7.0.1.tgz"
+  integrity sha1-b1OlqePkpHRFgir5aCHKUJ7TdWY=
 
 q@^1.1.2:
   version "1.5.1"
@@ -15346,6 +15724,11 @@ react-is@^17.0.2:
   version "17.0.2"
   resolved "http://npm.eniot.io:7001/react-is/download/react-is-17.0.2.tgz"
   integrity sha1-5pHUqOnHiTZWVVOas3J2Kw77VPA=
+
+react-is@^18.0.0:
+  version "18.3.1"
+  resolved "http://npm.eniot.io:7001/react-is/download/react-is-18.3.1.tgz"
+  integrity sha1-6DVX3BLq5jqZ4AOkY4ix3LtE234=
 
 react-json-view@^1.19.1:
   version "1.19.1"
@@ -16687,10 +17070,25 @@ side-channel@^1.0.2:
     es-abstract "^1.17.0-next.1"
     object-inspect "^1.7.0"
 
+siginfo@^2.0.0:
+  version "2.0.0"
+  resolved "http://npm.eniot.io:7001/siginfo/download/siginfo-2.0.0.tgz"
+  integrity sha1-MudscLeXJOO7Vny51UPrhYzPrzA=
+
+sigmund@^1.0.1:
+  version "1.0.1"
+  resolved "http://npm.eniot.io:7001/sigmund/download/sigmund-1.0.1.tgz"
+  integrity sha1-P/IfGYytIXX587eBhT/ZTQ0ZtZA=
+
 signal-exit@^3.0.0, signal-exit@^3.0.2:
   version "3.0.3"
   resolved "https://registry.npm.taobao.org/signal-exit/download/signal-exit-3.0.3.tgz?cache=0&sync_timestamp=1585253373618&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fsignal-exit%2Fdownload%2Fsignal-exit-3.0.3.tgz"
   integrity sha1-oUEMLt2PB3sItOJTyOrPyvBXRhw=
+
+signal-exit@^4.1.0:
+  version "4.1.0"
+  resolved "http://npm.eniot.io:7001/signal-exit/download/signal-exit-4.1.0.tgz"
+  integrity sha1-lSGIwcvVRgcOLdIND0HArgUwywQ=
 
 signale@1.4.0:
   version "1.4.0"
@@ -16759,6 +17157,11 @@ slice-ansi@^4.0.0:
     ansi-styles "^4.0.0"
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
+
+smart-buffer@^4.2.0:
+  version "4.2.0"
+  resolved "http://npm.eniot.io:7001/smart-buffer/download/smart-buffer-4.2.0.tgz"
+  integrity sha1-bh1x+k8YwF99D/IW3RakgdDo2a4=
 
 snapdragon-node@^2.0.1:
   version "2.1.1"
@@ -16830,6 +17233,14 @@ sockjs@0.3.20:
     faye-websocket "^0.10.0"
     uuid "^3.4.0"
     websocket-driver "0.6.5"
+
+socks@^2.8.6:
+  version "2.8.6"
+  resolved "http://npm.eniot.io:7001/socks/download/socks-2.8.6.tgz"
+  integrity sha1-4zVIaiVS80+TLwwn2Nu5PyvoZ6o=
+  dependencies:
+    ip-address "^9.0.5"
+    smart-buffer "^4.2.0"
 
 sort-keys@^1.0.0:
   version "1.1.2"
@@ -16987,6 +17398,11 @@ sprintf-js@^1.1.2:
   resolved "https://registry.npm.taobao.org/sprintf-js/download/sprintf-js-1.1.2.tgz"
   integrity sha1-2hdlJiv4wPVxdJ8q1sJjACB65nM=
 
+sprintf-js@^1.1.3:
+  version "1.1.3"
+  resolved "http://npm.eniot.io:7001/sprintf-js/download/sprintf-js-1.1.3.tgz"
+  integrity sha1-SRS5A6L4toXRf994pw6RfocuREo=
+
 sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.npm.taobao.org/sprintf-js/download/sprintf-js-1.0.3.tgz"
@@ -17024,6 +17440,11 @@ stack-utils@^1.0.1:
   resolved "https://registry.npm.taobao.org/stack-utils/download/stack-utils-1.0.2.tgz"
   integrity sha1-M+ujiXeIVYvr/C2wWdwVjsNs67g=
 
+stackback@0.0.2:
+  version "0.0.2"
+  resolved "http://npm.eniot.io:7001/stackback/download/stackback-0.0.2.tgz"
+  integrity sha1-Gsig2Ug4SNFpXkGLbQMaPDzmjjs=
+
 stackframe@^1.1.1:
   version "1.2.0"
   resolved "https://registry.npm.taobao.org/stackframe/download/stackframe-1.2.0.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fstackframe%2Fdownload%2Fstackframe-1.2.0.tgz"
@@ -17058,6 +17479,11 @@ std-env@^2.2.1:
   integrity sha1-L/oP3J4iY+AATBIRlm6WCUikD2s=
   dependencies:
     ci-info "^1.6.0"
+
+std-env@^3.5.0:
+  version "3.10.0"
+  resolved "http://npm.eniot.io:7001/std-env/download/std-env-3.10.0.tgz"
+  integrity sha1-2BCyfjoHMEeyteQANIgfXqb5yDs=
 
 stdin@0.0.1:
   version "0.0.1"
@@ -17339,6 +17765,11 @@ strip-final-newline@^2.0.0:
   resolved "https://registry.npm.taobao.org/strip-final-newline/download/strip-final-newline-2.0.0.tgz"
   integrity sha1-ibhS+y/L6Tb29LMYevsKEsGrWK0=
 
+strip-final-newline@^3.0.0:
+  version "3.0.0"
+  resolved "http://npm.eniot.io:7001/strip-final-newline/download/strip-final-newline-3.0.0.tgz"
+  integrity sha1-UolMMT+/8xiDUoCu1g/3Hr8SuP0=
+
 strip-indent@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npm.taobao.org/strip-indent/download/strip-indent-2.0.0.tgz"
@@ -17360,6 +17791,13 @@ strip-json-comments@^3.0.1, strip-json-comments@^3.1.0:
   version "3.1.0"
   resolved "https://registry.npm.taobao.org/strip-json-comments/download/strip-json-comments-3.1.0.tgz"
   integrity sha1-djjTFCISns9EV0QACfugP5+awYA=
+
+strip-literal@^2.0.0:
+  version "2.1.1"
+  resolved "http://npm.eniot.io:7001/strip-literal/download/strip-literal-2.1.1.tgz"
+  integrity sha1-JpBuZfYG1J90hFSggITpQZDC5a0=
+  dependencies:
+    js-tokens "^9.0.1"
 
 strip-outer@^1.0.0:
   version "1.0.1"
@@ -17980,10 +18418,25 @@ tiny-warning@^1.0.0, tiny-warning@^1.0.2, tiny-warning@^1.0.3:
   resolved "https://registry.npm.taobao.org/tiny-warning/download/tiny-warning-1.0.3.tgz"
   integrity sha1-lKMNtFPfTGQ9D9VmBg1gqHXYR1Q=
 
+tinybench@^2.5.1:
+  version "2.9.0"
+  resolved "http://npm.eniot.io:7001/tinybench/download/tinybench-2.9.0.tgz"
+  integrity sha1-EDyfi6bXI3pHq23R3P93JRhjQms=
+
 tinycolor2@^1.4.1:
   version "1.4.1"
   resolved "https://registry.npm.taobao.org/tinycolor2/download/tinycolor2-1.4.1.tgz"
   integrity sha1-9PrTM0R7wLB9TcjpIJ2POaisd+g=
+
+tinypool@^0.8.3:
+  version "0.8.4"
+  resolved "http://npm.eniot.io:7001/tinypool/download/tinypool-0.8.4.tgz"
+  integrity sha1-4hf+EnDZQbOemMYl3OzrsUCMmqg=
+
+tinyspy@^2.2.0:
+  version "2.2.1"
+  resolved "http://npm.eniot.io:7001/tinyspy/download/tinyspy-2.2.1.tgz"
+  integrity sha1-EXsjQvHzig29zHOlCkVIg634YdE=
 
 tmp@^0.0.33:
   version "0.0.33"
@@ -18205,10 +18658,15 @@ type-check@~0.3.2:
   dependencies:
     prelude-ls "~1.1.2"
 
-type-detect@4.0.8:
+type-detect@4.0.8, type-detect@^4.0.0:
   version "4.0.8"
   resolved "https://registry.npm.taobao.org/type-detect/download/type-detect-4.0.8.tgz"
   integrity sha1-dkb7XxiHHPu3dJ5pvTmmOI63RQw=
+
+type-detect@^4.1.0:
+  version "4.1.0"
+  resolved "http://npm.eniot.io:7001/type-detect/download/type-detect-4.1.0.tgz"
+  integrity sha1-3rJFPo8I3K566YxiaxPd2wFVkGw=
 
 type-fest@^0.11.0:
   version "0.11.0"
@@ -18279,6 +18737,11 @@ ua-parser-js@^0.7.18:
   version "0.7.21"
   resolved "https://registry.npm.taobao.org/ua-parser-js/download/ua-parser-js-0.7.21.tgz"
   integrity sha1-hTz5zpP2QvZxdCc8w0Vlrm8wh3c=
+
+ufo@^1.6.1:
+  version "1.6.1"
+  resolved "http://npm.eniot.io:7001/ufo/download/ufo-1.6.1.tgz"
+  integrity sha1-rC2x1UYU0bIsHWA+Ou9EqF2PFGs=
 
 uglify-js@^2.6.1:
   version "2.8.29"
@@ -18926,6 +19389,17 @@ vinyl@^2.0.1, vinyl@^2.2.0:
     remove-trailing-separator "^1.0.1"
     replace-ext "^1.0.0"
 
+vite-node@1.6.0:
+  version "1.6.0"
+  resolved "http://npm.eniot.io:7001/vite-node/download/vite-node-1.6.0.tgz"
+  integrity sha1-LH5hEpv+zHWUePpZJ1T9lwSqun8=
+  dependencies:
+    cac "^6.7.14"
+    debug "^4.3.4"
+    pathe "^1.1.1"
+    picocolors "^1.0.0"
+    vite "^5.0.0"
+
 vite@^5.0.0:
   version "5.4.21"
   resolved "http://npm.eniot.io:7001/vite/download/vite-5.4.21.tgz"
@@ -18937,6 +19411,32 @@ vite@^5.0.0:
   optionalDependencies:
     fsevents "~2.3.3"
 
+vitest@^1.6.0:
+  version "1.6.0"
+  resolved "http://npm.eniot.io:7001/vitest/download/vitest-1.6.0.tgz"
+  integrity sha1-nVrUdSo8RRvpGeQSxZcSbP+5iS8=
+  dependencies:
+    "@vitest/expect" "1.6.0"
+    "@vitest/runner" "1.6.0"
+    "@vitest/snapshot" "1.6.0"
+    "@vitest/spy" "1.6.0"
+    "@vitest/utils" "1.6.0"
+    acorn-walk "^8.3.2"
+    chai "^4.3.10"
+    debug "^4.3.4"
+    execa "^8.0.1"
+    local-pkg "^0.5.0"
+    magic-string "^0.30.5"
+    pathe "^1.1.1"
+    picocolors "^1.0.0"
+    std-env "^3.5.0"
+    strip-literal "^2.0.0"
+    tinybench "^2.5.1"
+    tinypool "^0.8.3"
+    vite "^5.0.0"
+    vite-node "1.6.0"
+    why-is-node-running "^2.2.2"
+
 vm-browserify@^1.0.1:
   version "1.1.2"
   resolved "https://registry.npm.taobao.org/vm-browserify/download/vm-browserify-1.1.2.tgz?cache=0&sync_timestamp=1572870772154&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fvm-browserify%2Fdownload%2Fvm-browserify-1.1.2.tgz"
@@ -18946,6 +19446,11 @@ void-elements@^2.0.1:
   version "2.0.1"
   resolved "https://registry.npm.taobao.org/void-elements/download/void-elements-2.0.1.tgz"
   integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
+
+vue-component-type-helpers@1.6.5:
+  version "1.6.5"
+  resolved "http://npm.eniot.io:7001/vue-component-type-helpers/download/vue-component-type-helpers-1.6.5.tgz"
+  integrity sha1-/2t1UpBjdEsJZmVXJfPgLzDZfNc=
 
 vue-demi@*, vue-demi@^0.14.10:
   version "0.14.10"
@@ -19060,6 +19565,11 @@ webidl-conversions@^4.0.2:
   version "4.0.2"
   resolved "https://registry.npm.taobao.org/webidl-conversions/download/webidl-conversions-4.0.2.tgz"
   integrity sha1-qFWYCx8LazWbodXZ+zmulB+qY60=
+
+webidl-conversions@^7.0.0:
+  version "7.0.0"
+  resolved "http://npm.eniot.io:7001/webidl-conversions/download/webidl-conversions-7.0.0.tgz"
+  integrity sha1-JWtOGIK+feu/AdBfCqIDl3jqCAo=
 
 webpack-chain@6.5.0:
   version "6.5.0"
@@ -19192,6 +19702,11 @@ whatwg-mimetype@^2.2.0, whatwg-mimetype@^2.3.0:
   resolved "https://registry.npm.taobao.org/whatwg-mimetype/download/whatwg-mimetype-2.3.0.tgz"
   integrity sha1-PUseAxLSB5h5+Cav8Y2+7KWWD78=
 
+whatwg-mimetype@^3.0.0:
+  version "3.0.0"
+  resolved "http://npm.eniot.io:7001/whatwg-mimetype/download/whatwg-mimetype-3.0.0.tgz"
+  integrity sha1-X6GnYjhn/xr2yj3HKta4pCCL66c=
+
 whatwg-url@^7.0.0:
   version "7.1.0"
   resolved "https://registry.npm.taobao.org/whatwg-url/download/whatwg-url-7.1.0.tgz"
@@ -19224,6 +19739,14 @@ which@^2.0.1, which@^2.0.2:
   integrity sha1-fGqN0KY2oDJ+ELWckobu6T8/UbE=
   dependencies:
     isexe "^2.0.0"
+
+why-is-node-running@^2.2.2:
+  version "2.3.0"
+  resolved "http://npm.eniot.io:7001/why-is-node-running/download/why-is-node-running-2.3.0.tgz"
+  integrity sha1-o/aalxB/SUs83Dvd3Yg6fWXOvwQ=
+  dependencies:
+    siginfo "^2.0.0"
+    stackback "0.0.2"
 
 widest-line@^3.1.0:
   version "3.1.0"
@@ -19379,6 +19902,11 @@ y18n@^4.0.0:
   resolved "https://registry.npm.taobao.org/y18n/download/y18n-4.0.0.tgz"
   integrity sha1-le+U+F7MgdAHwmThkKEg8KPIVms=
 
+yallist@^2.1.2:
+  version "2.1.2"
+  resolved "http://npm.eniot.io:7001/yallist/download/yallist-2.1.2.tgz"
+  integrity sha1-HBH5IY8HYImkfdUS+TxmmaaoHVI=
+
 yallist@^3.0.2:
   version "3.1.1"
   resolved "https://registry.npm.taobao.org/yallist/download/yallist-3.1.1.tgz"
@@ -19470,6 +19998,11 @@ yauzl@^2.10.0:
   dependencies:
     buffer-crc32 "~0.2.3"
     fd-slicer "~1.1.0"
+
+yocto-queue@^1.0.0:
+  version "1.2.1"
+  resolved "http://npm.eniot.io:7001/yocto-queue/download/yocto-queue-1.2.1.tgz"
+  integrity sha1-NtfEc593Wzy8KOYTbiGqBXrexBg=
 
 zlib@1.0.5:
   version "1.0.5"

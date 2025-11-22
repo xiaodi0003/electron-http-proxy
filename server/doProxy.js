@@ -5,6 +5,7 @@ const http = require('http');
 const https = require('https');
 const {getProtocol, getPort, getDomain, getPath} = require('./utils.js');
 const pSettings = require('./proxySettings.js');
+const { handleHarReplay } = require('./harReplay.js');
 
 // Create proxy agent for backend proxy
 function createProxyAgent(backendProxy, targetProtocol) {
@@ -273,9 +274,13 @@ function handleDirectConnection(target, requestDetail) {
   return requestDetail;
 }
 
-
-
 async function exeProxy(target, requestDetail) {
+  // Handle har:// protocol
+  if (target.startsWith('har://')) {
+    const setting = requestDetail._req.proxySetting;
+    return handleHarReplay(setting, requestDetail);
+  }
+  
   // Handle file:// protocol
   if (target.startsWith('file://')) {
     return new Promise(resolve => {

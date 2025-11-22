@@ -30,6 +30,8 @@ export interface ProxySetting {
   resHookCode: string;
   delay: number;
   backendProxy?: BackendProxyConfig; // Optional backend proxy configuration
+  harData?: any; // HAR file data for har:// protocol
+  harIgnoreParams?: string; // Comma-separated list of parameters to ignore when matching
 }
 
 export interface HttpListConfig {

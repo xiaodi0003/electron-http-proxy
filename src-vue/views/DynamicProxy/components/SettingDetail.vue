@@ -51,12 +51,13 @@
       </el-form-item>
 
       <el-form-item label="代理目标" prop="to">
-        <el-input v-model="toUrl" :disabled="formData.reqHook" @blur="handleToBlur">
+        <el-input v-model="toUrl" :disabled="formData.reqHook || toProtocol === 'har'" @blur="handleToBlur">
           <template #prepend>
             <el-select v-model="toProtocol" :disabled="formData.reqHook" style="width: 90px" @change="updateToUrl">
               <el-option label="http://" value="http" />
               <el-option label="https://" value="https" />
               <el-option label="file://" value="file" />
+              <el-option label="har://" value="har" />
             </el-select>
           </template>
           <template #append v-if="toProtocol === 'file'">
@@ -70,12 +71,33 @@
             />
             <el-button type="text" @click="triggerFileSelect">选择</el-button>
           </template>
+          <template #append v-if="toProtocol === 'har'">
+            <input
+              ref="harFileInputRef"
+              type="file"
+              accept=".har"
+              style="display: none"
+              @change="handleSelectHarFile"
+            />
+            <el-button type="text" @click="triggerHarFileSelect">上传HAR</el-button>
+          </template>
         </el-input>
+      </el-form-item>
+
+      <!-- HAR ignore parameters configuration -->
+      <el-form-item v-if="toProtocol === 'har'" label="忽略参数" prop="harIgnoreParams">
+        <el-input
+          v-model="formData.harIgnoreParams"
+          placeholder="输入要忽略的参数名，多个参数用逗号分隔，如: timestamp,_t"
+        />
+        <div style="color: #909399; font-size: 12px; margin-top: 4px;">
+          匹配时会忽略这些URL参数，适用于时间戳等动态参数
+        </div>
       </el-form-item>
 
       <!-- Backend proxy configuration - only show for http/https targets -->
       <BackendProxyConfig
-        v-if="toProtocol === 'http' || toProtocol === 'https'"
+        v-if="(toProtocol === 'http' || toProtocol === 'https') && formData.backendProxy"
         v-model="formData.backendProxy"
       />
 
@@ -131,6 +153,7 @@ const showTest = ref(false);
 const testUrl = ref('');
 const testResult = ref<{ success: boolean; message: string } | null>(null);
 const fileInputRef = ref<HTMLInputElement>();
+const harFileInputRef = ref<HTMLInputElement>();
 
 const getInitReqChangeCode = () => `// 按需修改url、headers、body，可以返回具体的值，也可以返回一个Promise
 // 注意：body如果是json，需要先stringify
@@ -155,11 +178,13 @@ const formData = reactive<ProxySetting>({
   resHookCode: props.setting.resHookCode || getInitResChangeCode(),
   delay: props.setting.delay || 0,
   backendProxy: props.setting.backendProxy || { ...DEFAULT_BACKEND_PROXY },
+  harData: props.setting.harData || null,
+  harIgnoreParams: props.setting.harIgnoreParams || '',
 });
 
 const removeProtocol = (url: string) => url.replace(/^.*?:\/\//, '');
 const getProtocol = (url: string) => url.replace(/(.*?):.*/, '$1');
-const hasProtocol = (url: string) => ['http', 'https', 'file'].includes(getProtocol(url));
+const hasProtocol = (url: string) => ['http', 'https', 'file', 'har'].includes(getProtocol(url));
 
 const fromProtocol = ref(getProtocol(formData.from));
 const fromUrl = ref(removeProtocol(formData.from));
@@ -192,6 +217,41 @@ const handleToBlur = () => {
 
 const triggerFileSelect = () => {
   fileInputRef.value?.click();
+};
+
+const triggerHarFileSelect = () => {
+  harFileInputRef.value?.click();
+};
+
+const handleSelectHarFile = async (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+  
+  if (!file) {
+    return;
+  }
+
+  try {
+    const content = await file.text();
+    const harData = JSON.parse(content);
+    
+    // Validate HAR format
+    if (!harData.log || !harData.log.entries) {
+      throw new Error('Invalid HAR file format');
+    }
+    
+    // Store HAR data in formData
+    formData.harData = harData;
+    toUrl.value = file.name;
+    updateToUrl();
+    
+    // Reset file input
+    target.value = '';
+  } catch (error) {
+    console.error('Failed to load HAR file:', error);
+    alert(error instanceof Error ? error.message : '加载HAR文件失败');
+    target.value = '';
+  }
 };
 
 const handleSelectFile = (event: Event) => {

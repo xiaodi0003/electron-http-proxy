@@ -62,5 +62,7 @@ module.exports = {
   // 请求出错的事件
   *onError(requestDetail, error) { return Promise.resolve(true); },
   // https连接服务器出错
-  *onConnectError(requestDetail, error) { return Promise.resolve(true); }
+  *onConnectError(requestDetail, error) { return Promise.resolve(true); },
+  // Export proxyAdapter from doProxy
+  proxyAdapter: doProxy.proxyAdapter
 };

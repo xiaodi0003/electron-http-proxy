@@ -4,6 +4,39 @@ const path = require('path');
 const {getProtocol, getPort, getDomain, getPath} = require('./utils.js');
 const pSettings = require('./proxySettings.js');
 
+// ProxyAdapter for AnyProxy to handle backend proxy
+exports.proxyAdapter = {
+  async createProxy(requestDetail) {
+    // Find matching proxy setting using findSetting
+    const setting = pSettings.getProxySettings()
+      .filter(s => s.enabled)
+      .find(s => findSetting(s, requestDetail));
+
+    // Return proxy config if backend proxy is configured
+    if (setting?.backendProxy) {
+      const bp = setting.backendProxy;
+      const proxyConfig = {
+        protocol: bp.type, // 'http' or 'socks5'
+        host: bp.host,
+        port: parseInt(bp.port, 10)
+      };
+      
+      // Add auth if provided
+      if (bp.username && bp.password) {
+        proxyConfig.auth = {
+          username: bp.username,
+          password: bp.password
+        };
+      }
+      
+      console.log(`Using ${bp.type} proxy for ${requestDetail.url}: ${bp.host}:${bp.port}`);
+      return proxyConfig;
+    }
+    
+    return null; // No proxy, direct connection
+  }
+};
+
 async function sleep(setting) {
   if (setting && setting.delay && !isNaN(setting.delay)) {
     return new Promise(r => {
@@ -30,8 +63,8 @@ exports.proxyReq = async function(requestDetail) {
       return doReqHook(setting, requestDetail);
     }
     const target = getTarget(setting, requestDetail);
-    const backendProxy = setting.backendProxy;
-    return exeProxy(target, requestDetail, backendProxy);
+    // Backend proxy is now handled by AnyProxy's proxyAdapter
+    return exeProxy(target, requestDetail);
   }
   return requestDetail;
 }
@@ -96,15 +129,9 @@ async function doReqHook(setting, req) {
         headers: req.requestOptions.headers,
         body: req.requestData.toString()
       });
-      // Apply the modified URL, headers, and body
-      req.url = url;
+      exeProxy(url, req);
       req.requestOptions.headers = headers;
       req.requestData = body; // Buffer.from(body);
-      
-      // Execute proxy with backend proxy configuration
-      const target = url;
-      const backendProxy = setting.backendProxy;
-      return await exeProxy(target, req, backendProxy);
     }
   } catch (e) {
     console.error(e);
@@ -148,120 +175,9 @@ function handleDirectConnection(target, requestDetail) {
   return requestDetail;
 }
 
-// Handle HTTP proxy connection by forwarding through proxy server
-function handleHttpProxy(target, requestDetail, backendProxy) {
-  try {
-    const targetProtocol = getProtocol(target);
-    const targetHostname = getDomain(target);
-    const targetPort = getPort(target);
-    const targetPath = getPath(target);
 
-    console.log(`Request ${target} using HTTP proxy: ${backendProxy.host}:${backendProxy.port}`);
 
-    const newRequestOptions = requestDetail.requestOptions;
-    
-    // For HTTP proxy, we need to:
-    // 1. Connect to the proxy server (not the target)
-    // 2. Send the full URL in the request path (not just the path)
-    requestDetail.protocol = 'http:';
-    newRequestOptions.hostname = backendProxy.host;
-    newRequestOptions.port = parseInt(backendProxy.port, 10); // Convert port to number
-    
-    // For HTTP proxy, the path should be the full target URL
-    newRequestOptions.path = target;
-    
-    // Keep the original host header for the target server
-    // newRequestOptions.headers.host = targetHostname;
-    newRequestOptions.headers.Host = targetHostname;
-    newRequestOptions.headers.Origin = targetProtocol + '://' + targetHostname;
-    // newRequestOptions.headers.Referer = target;
-
-    // Add proxy authentication if provided
-    if (backendProxy.username && backendProxy.password) {
-      const auth = Buffer.from(`${backendProxy.username}:${backendProxy.password}`).toString('base64');
-      newRequestOptions.headers['Proxy-Authorization'] = `Basic ${auth}`;
-    }
-
-    return requestDetail;
-  } catch (err) {
-    console.error('HTTP Proxy setup failed:', err);
-    return {
-      response: {
-        statusCode: 502,
-        header: { 'Content-Type': 'text/plain' },
-        body: `HTTP Proxy setup failed: ${err.message}`
-      }
-    };
-  }
-}
-
-// Handle SOCKS5 proxy connection by forwarding through SOCKS5 server
-async function handleSocks5Proxy(target, requestDetail, backendProxy) {
-  try {
-    const http = require('http');
-    const https = require('https');
-    const { SocksClient } = require('socks');
-    
-    const targetProtocol = getProtocol(target);
-    const targetHostname = getDomain(target);
-    const targetPort = getPort(target);
-    const targetPath = getPath(target);
-
-    console.log(`Request ${target} using SOCKS5 proxy: ${backendProxy.host}:${backendProxy.port}`);
-
-    const newRequestOptions = requestDetail.requestOptions;
-
-    // For SOCKS5 proxy, we need to:
-    // 1. Establish SOCKS5 connection to proxy server
-    // 2. Use the socket to connect to target server
-    const socksOptions = {
-      proxy: {
-        host: backendProxy.host,
-        port: parseInt(backendProxy.port, 10), // Convert port to number
-        type: 5,
-        userId: backendProxy.username,
-        password: backendProxy.password
-      },
-      command: 'connect',
-      destination: {
-        host: targetHostname,
-        port: targetPort
-      },
-      timeout: 30000
-    };
-
-    // Establish SOCKS5 connection
-    const socksConnection = await SocksClient.createConnection(socksOptions);
-
-    // Update request options to target server
-    requestDetail.protocol = targetProtocol;
-    newRequestOptions.hostname = targetHostname;
-    newRequestOptions.port = targetPort;
-    newRequestOptions.path = targetPath;
-    newRequestOptions.headers.Host = targetHostname;
-    newRequestOptions.headers.Origin = targetProtocol + '://' + targetHostname;
-
-    // Create agent with the SOCKS socket
-    const Agent = targetProtocol === 'https:' ? https.Agent : http.Agent;
-    newRequestOptions.agent = new Agent({
-      socket: socksConnection.socket,
-      keepAlive: false
-    });
-
-    return requestDetail;
-  } catch (err) {
-    console.error('SOCKS5 Proxy connection failed:', err);
-    return {
-      response: {
-        statusCode: 502,
-        header: { 'Content-Type': 'text/plain' },
-        body: `SOCKS5 Proxy connection failed: ${err.message}`
-      }
-    };
-  }
-}
-
-async function exeProxy(target, requestDetail, backendProxy) {
+async function exeProxy(target, requestDetail) {
   // Handle file:// protocol
   if (target.startsWith('file://')) {
     return new Promise(resolve => {
@@ -288,13 +204,7 @@ async function exeProxy(target, requestDetail, backendProxy) {
     });
   }
   
-  // Handle http/https protocols based on backend proxy configuration
-  if (backendProxy?.type === 'http') {
-    return handleHttpProxy(target, requestDetail, backendProxy);
-  } else if (backendProxy?.type === 'socks5') {
-    return await handleSocks5Proxy(target, requestDetail, backendProxy);
-  }
-  
-  // Default to direct connection
+  // Backend proxy is handled by AnyProxy's proxyAdapter
+  // Just update the target URL
   return handleDirectConnection(target, requestDetail);
 }

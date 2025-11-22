@@ -88,6 +88,15 @@ export const useGlobalStore = defineStore('global', {
       this.httpPackages = [];
     },
 
+    httpPackageImport(payload: HttpPackage[]) {
+      this.httpPackages.push(...payload);
+      
+      // Keep only last 500 items
+      if (this.httpPackages.length > 500) {
+        this.httpPackages = this.httpPackages.slice(-500);
+      }
+    },
+
     httpListConfigChange(payload: Partial<HttpListConfig>) {
       this.httpListConfig = { ...this.httpListConfig, ...payload };
     },

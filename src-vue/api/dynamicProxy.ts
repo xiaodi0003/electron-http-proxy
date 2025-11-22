@@ -16,3 +16,7 @@ export async function deleteProxySetting(setting: ProxySetting) {
 export async function updateProxySetting(setting: ProxySetting) {
   return sendElectronMessage({ channel: 'updateProxySetting', payload: setting });
 }
+
+export async function moveProxySetting(setting: ProxySetting, direction: 'up' | 'down') {
+  return sendElectronMessage({ channel: 'moveProxySetting', payload: { setting, direction } });
+}

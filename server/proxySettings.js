@@ -33,3 +33,28 @@ exports.updateProxySetting = (setting) => {
   }
   return Promise.resolve(true);
 };
+
+exports.moveProxySetting = ({ setting, direction }) => {
+  const proxySettings = getProxySettings();
+  const index = proxySettings.findIndex(s => s.id === setting.id);
+  
+  if (index === -1) {
+    return Promise.resolve(false);
+  }
+  
+  // Move up: swap with previous item
+  if (direction === 'up' && index > 0) {
+    [proxySettings[index - 1], proxySettings[index]] = [proxySettings[index], proxySettings[index - 1]];
+    setProxySettings(proxySettings);
+    return Promise.resolve(true);
+  }
+  
+  // Move down: swap with next item
+  if (direction === 'down' && index < proxySettings.length - 1) {
+    [proxySettings[index], proxySettings[index + 1]] = [proxySettings[index + 1], proxySettings[index]];
+    setProxySettings(proxySettings);
+    return Promise.resolve(true);
+  }
+  
+  return Promise.resolve(false);
+};

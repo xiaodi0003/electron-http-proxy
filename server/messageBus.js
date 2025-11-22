@@ -13,7 +13,7 @@ exports.serverMessage = function(channel, payload) {
   });
 };
 
-['addProxySetting', 'updateProxySetting', 'deleteProxySetting'].forEach(channel => {
+['addProxySetting', 'updateProxySetting', 'deleteProxySetting', 'moveProxySetting'].forEach(channel => {
   ipcMain.on(channel, (event, arg) => {
     pSettings[channel](JSON.parse(arg)).then(() => {
       event.sender.send('proxySettings', JSON.stringify(pSettings.getProxySettings()));

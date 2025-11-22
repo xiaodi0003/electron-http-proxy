@@ -11,9 +11,11 @@
       <el-table-column prop="type" label="匹配方式" width="100" />
       <el-table-column prop="from" label="From" min-width="200" />
       <el-table-column prop="to" label="To" min-width="200" />
-      <el-table-column label="操作" width="250" class-name="operations">
-        <template #default="{ row }">
+      <el-table-column label="操作" width="350" class-name="operations">
+        <template #default="{ row, $index }">
           <div style="white-space: nowrap;">
+            <el-button link type="primary" @click="moveUp(row, $index)" :disabled="$index === 0">上移</el-button>
+            <el-button link type="primary" @click="moveDown(row, $index)" :disabled="$index === proxySettings.length - 1">下移</el-button>
             <el-button link type="primary" @click="editSetting(row)">Edit</el-button>
             <el-button link type="danger" @click="handleDelete(row)">Delete</el-button>
             <el-button link type="primary" @click="copySetting(row)">Copy</el-button>
@@ -42,7 +44,7 @@
 import { ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useGlobalStore, type ProxySetting, DEFAULT_BACKEND_PROXY } from '../../stores/global';
-import { getProxySettings, updateProxySetting, addProxySetting, deleteProxySetting } from '../../api/dynamicProxy';
+import { getProxySettings, updateProxySetting, addProxySetting, deleteProxySetting, moveProxySetting } from '../../api/dynamicProxy';
 import SettingDetail from './components/SettingDetail.vue';
 
 const globalStore = useGlobalStore();
@@ -96,6 +98,18 @@ const handleSave = (setting: ProxySetting) => {
     }
   }
   nowSetting.value = null;
+};
+
+const moveUp = (setting: ProxySetting, index: number) => {
+  if (index > 0) {
+    moveProxySetting(setting, 'up');
+  }
+};
+
+const moveDown = (setting: ProxySetting, index: number) => {
+  if (index < proxySettings.value.length - 1) {
+    moveProxySetting(setting, 'down');
+  }
 };
 
 onMounted(() => {

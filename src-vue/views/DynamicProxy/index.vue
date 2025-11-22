@@ -11,7 +11,7 @@
       <el-table-column prop="type" label="匹配方式" width="100" />
       <el-table-column prop="from" label="From" min-width="200" />
       <el-table-column prop="to" label="To" min-width="200" />
-      <el-table-column label="操作" width="320" class-name="operations">
+      <el-table-column label="操作" width="250" class-name="operations">
         <template #default="{ row }">
           <div style="white-space: nowrap;">
             <el-button link type="primary" @click="editSetting(row)">Edit</el-button>

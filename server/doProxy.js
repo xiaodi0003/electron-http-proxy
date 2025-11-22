@@ -60,6 +60,7 @@ exports.proxyReq = async function(requestDetail) {
     requestDetail._req.proxySetting = setting;
     await sleep(setting)
     if (setting.reqHook) {
+      // 优先使用reqHook的url，所以直接返回
       return doReqHook(setting, requestDetail);
     }
     const target = getTarget(setting, requestDetail);
@@ -131,7 +132,18 @@ async function doReqHook(setting, req) {
       });
       exeProxy(url, req);
       req.requestOptions.headers = headers;
-      req.requestData = body; // Buffer.from(body);
+      // Handle different body types properly
+      let newRequestData;
+      if (Buffer.isBuffer(body)) {
+        newRequestData = body;
+      // } else if (typeof body === 'object') {
+      //   newRequestData = Buffer.from(JSON.stringify(body));
+      } else if (typeof body === 'string') {
+        newRequestData = Buffer.from(body);
+      } else {
+        newRequestData = Buffer.from(String(body));
+      }
+      req.requestData = newRequestData;
     }
   } catch (e) {
     console.error(e);

@@ -133,6 +133,7 @@ const testResult = ref<{ success: boolean; message: string } | null>(null);
 const fileInputRef = ref<HTMLInputElement>();
 
 const getInitReqChangeCode = () => `// 按需修改url、headers、body，可以返回具体的值，也可以返回一个Promise
+// 注意：body如果是json，需要先stringify
 async function reqHook({url, headers, body}) {
   return {url, headers, body};
 }`;

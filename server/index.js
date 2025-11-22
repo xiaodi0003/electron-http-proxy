@@ -13,7 +13,7 @@ exports.start = function(port) {
     throttle: 10000,
     forceProxyHttps: true,
     wsIntercept: false, // 不开启websocket代理
-    silent: false
+    silent: true  // Disable AnyProxy native logs
   };
   const proxyServer = new AnyProxy.ProxyServer(options);
   

@@ -1,41 +1,114 @@
 const fs = require('fs');
 const mime = require('mime');
 const path = require('path');
+const http = require('http');
+const https = require('https');
 const {getProtocol, getPort, getDomain, getPath} = require('./utils.js');
 const pSettings = require('./proxySettings.js');
 
-// ProxyAdapter for AnyProxy to handle backend proxy
-exports.proxyAdapter = {
-  async createProxy(requestDetail) {
-    // Find matching proxy setting using findSetting
-    const setting = pSettings.getProxySettings()
-      .filter(s => s.enabled)
-      .find(s => findSetting(s, requestDetail));
-
-    // Return proxy config if backend proxy is configured
-    if (setting?.backendProxy) {
-      const bp = setting.backendProxy;
-      const proxyConfig = {
-        protocol: bp.type, // 'http' or 'socks5'
-        host: bp.host,
-        port: parseInt(bp.port, 10)
-      };
-      
-      // Add auth if provided
-      if (bp.username && bp.password) {
-        proxyConfig.auth = {
-          username: bp.username,
-          password: bp.password
-        };
-      }
-      
-      console.log(`Using ${bp.type} proxy for ${requestDetail.url}: ${bp.host}:${bp.port}`);
-      return proxyConfig;
+// Create proxy agent for backend proxy
+function createProxyAgent(backendProxy, targetProtocol) {
+  const { type, host, port, username, password } = backendProxy;
+  
+  if (type === 'http') {
+    // For HTTP proxy, use different agent based on target protocol
+    let proxyUrl = `http://${host}:${port}`;
+    if (username && password) {
+      proxyUrl = `http://${username}:${password}@${host}:${port}`;
     }
     
-    return null; // No proxy, direct connection
+    console.log(`Using HTTP proxy for ${targetProtocol} request: ${proxyUrl}`);
+    
+    if (targetProtocol === 'https:') {
+      // For HTTPS targets, use https-proxy-agent
+      const HttpsProxyAgent = require('https-proxy-agent');
+      return new HttpsProxyAgent(proxyUrl);
+    } else {
+      // For HTTP targets, create a simple HTTP agent with proxy
+      const url = require('url');
+      const proxyOpts = url.parse(proxyUrl);
+      
+      // Create custom HTTP agent that connects through proxy
+      class HttpProxyAgent extends http.Agent {
+        createConnection(options, callback) {
+          const proxyReq = http.request({
+            host: proxyOpts.hostname,
+            port: proxyOpts.port,
+            method: 'CONNECT',
+            path: `${options.host || options.hostname}:${options.port}`,
+            headers: proxyOpts.auth ? {
+              'Proxy-Authorization': 'Basic ' + Buffer.from(proxyOpts.auth).toString('base64')
+            } : {}
+          });
+          
+          proxyReq.on('connect', (res, socket) => {
+            callback(null, socket);
+          });
+          
+          proxyReq.on('error', callback);
+          proxyReq.end();
+        }
+      }
+      
+      return new HttpProxyAgent();
+    }
+  } else if (type === 'socks5') {
+    // Create a proper Agent class for SOCKS5
+    const SocksClient = require('socks').SocksClient;
+    const tls = require('tls');
+    const Agent = targetProtocol === 'https:' ? https.Agent : http.Agent;
+    const isHttps = targetProtocol === 'https:';
+    
+    console.log(`Using SOCKS5 proxy for ${targetProtocol} request: ${host}:${port}`);
+    
+    // Create custom agent that extends http.Agent or https.Agent
+    class SocksAgent extends Agent {
+      createConnection(options, callback) {
+        const socksOptions = {
+          proxy: {
+            host: host,
+            port: parseInt(port, 10),
+            type: 5,
+            userId: username,
+            password: password
+          },
+          command: 'connect',
+          destination: {
+            host: options.host || options.hostname,
+            port: options.port
+          }
+        };
+        
+        SocksClient.createConnection(socksOptions, (err, info) => {
+          if (err) {
+            callback(err);
+          } else {
+            // For HTTPS, wrap the socket with TLS
+            if (isHttps) {
+              const tlsSocket = tls.connect({
+                socket: info.socket,
+                servername: options.servername || options.host || options.hostname,
+                rejectUnauthorized: options.rejectUnauthorized !== false
+              });
+              
+              tlsSocket.on('error', callback);
+              tlsSocket.on('secureConnect', () => {
+                callback(null, tlsSocket);
+              });
+            } else {
+              // For HTTP, use the socket directly
+              callback(null, info.socket);
+            }
+          }
+        });
+      }
+    }
+    
+    return new SocksAgent();
   }
-};
+  
+  return null;
+}
 
 async function sleep(setting) {
   if (setting && setting.delay && !isNaN(setting.delay)) {
@@ -58,13 +131,26 @@ exports.proxyReq = async function(requestDetail) {
   const setting = pSettings.getProxySettings().filter(s => s.enabled).find(s => findSetting(s, requestDetail));
   if (setting) {
     requestDetail._req.proxySetting = setting;
-    await sleep(setting)
+    await sleep(setting);
+    
+    // Handle backend proxy by setting agent in requestOptions (for both reqHook and normal proxy)
+    if (setting.backendProxy) {
+      // Ensure protocol has colon suffix
+      const protocol = requestDetail.protocol.endsWith(':') 
+        ? requestDetail.protocol 
+        : requestDetail.protocol + ':';
+      const agent = createProxyAgent(setting.backendProxy, protocol);
+      if (agent) {
+        requestDetail.requestOptions.agent = agent;
+      }
+    }
+    
     if (setting.reqHook) {
       // 优先使用reqHook的url，所以直接返回
       return doReqHook(setting, requestDetail);
     }
     const target = getTarget(setting, requestDetail);
-    // Backend proxy is now handled by AnyProxy's proxyAdapter
+    
     return exeProxy(target, requestDetail);
   }
   return requestDetail;
@@ -216,7 +302,6 @@ async function exeProxy(target, requestDetail) {
     });
   }
   
-  // Backend proxy is handled by AnyProxy's proxyAdapter
-  // Just update the target URL
+  // Update the target URL (agent is already set in proxyReq if backend proxy is configured)
   return handleDirectConnection(target, requestDetail);
 }

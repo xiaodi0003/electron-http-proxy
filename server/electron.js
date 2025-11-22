@@ -31,7 +31,7 @@ function createWindow() {
   mainWindow.loadURL(startUrl);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // 注册快捷键
   // Cmd+R / Ctrl+R: 刷新页面

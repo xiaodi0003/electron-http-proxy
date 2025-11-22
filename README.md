@@ -43,6 +43,7 @@ yarn run start-electron
 - 表单提交的抓包支持
 - 展示图片预览
 - 修改图标
+- 支持国际化
 
 ### 性能
 - 抓包列表性能太差
@@ -53,7 +54,7 @@ yarn run start-electron
 - 重复发送请求
 
 ### 动态代理
-- 支持到重定向到带有http和socks5的后端地址
+- 
 
 ### 打包
 - 支持windows

@@ -13,6 +13,7 @@ function getProtocol(url) {
 exports.getProtocol = getProtocol;
 
 exports.getPort = function getPort(url) {
-  const match = url.match(/.*?:\/\/.*?:(\d+).*/);
+  // Match port only in hostname part (before first slash after protocol)
+  const match = url.match(/.*?:\/\/[^/:]+:(\d+)/);
   return match ? Number(match[1]) : (getProtocol(url).toLocaleLowerCase() === 'https' ? 443 : 80);
 }

@@ -46,6 +46,63 @@ function compareUrls(parsedUrl1, parsedUrl2) {
   return params1 === params2;
 }
 
+// Parse and normalize form data (application/x-www-form-urlencoded)
+function parseFormData(body, ignoreParams) {
+  try {
+    const params = new URLSearchParams(body);
+    
+    // Remove ignored parameters
+    if (ignoreParams && ignoreParams.length > 0) {
+      ignoreParams.forEach(param => {
+        params.delete(param);
+      });
+    }
+    
+    // Sort parameters for consistent comparison
+    const sortedParams = new URLSearchParams(
+      Array.from(params.entries()).sort((a, b) => a[0].localeCompare(b[0]))
+    );
+    
+    return sortedParams.toString();
+  } catch (e) {
+    return body;
+  }
+}
+
+// Get Content-Type from headers
+function getContentType(headers) {
+  if (!headers) return '';
+  
+  // Handle both array format (HAR) and object format (request)
+  if (Array.isArray(headers)) {
+    const contentTypeHeader = headers.find(h => h.name.toLowerCase() === 'content-type');
+    return contentTypeHeader ? contentTypeHeader.value.toLowerCase() : '';
+  } else {
+    const contentTypeKey = Object.keys(headers).find(k => k.toLowerCase() === 'content-type');
+    return contentTypeKey ? headers[contentTypeKey].toLowerCase() : '';
+  }
+}
+
+// Compare request bodies
+function compareBodies(reqBody, entryBody, reqHeaders, entryHeaders, ignoreParams) {
+  const reqContentType = getContentType(reqHeaders);
+  const entryContentType = getContentType(entryHeaders);
+  
+  // Check if both are form data
+  const isReqForm = reqContentType.includes('application/x-www-form-urlencoded');
+  const isEntryForm = entryContentType.includes('application/x-www-form-urlencoded');
+  
+  if (isReqForm && isEntryForm) {
+    // Compare as form data with ignored parameters
+    const normalizedReqBody = parseFormData(reqBody, ignoreParams);
+    const normalizedEntryBody = parseFormData(entryBody, ignoreParams);
+    return normalizedReqBody === normalizedEntryBody;
+  }
+  
+  // For other content types, compare directly
+  return reqBody === entryBody;
+}
+
 // Match HAR entry with request
 function matchHarEntry(entry, requestDetail, ignoreParams) {
   const reqMethod = requestDetail._req.method;
@@ -68,8 +125,10 @@ function matchHarEntry(entry, requestDetail, ignoreParams) {
   if ((reqMethod === 'POST' || reqMethod === 'PUT') && entry.request.postData) {
     const reqBody = requestDetail.requestData.toString();
     const entryBody = entry.request.postData.text || '';
+    const reqHeaders = requestDetail.requestOptions.headers;
+    const entryHeaders = entry.request.headers;
     
-    if (reqBody !== entryBody) {
+    if (!compareBodies(reqBody, entryBody, reqHeaders, entryHeaders, ignoreParams)) {
       return false;
     }
   }

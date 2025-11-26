@@ -2,7 +2,9 @@ const AnyProxy = require('anyproxy');
 const rule = require('./rule');
 const systemShell = require('./systemShell');
 
-exports.start = function(port) {
+let proxyServer = null;
+
+exports.start = async function(port) {
   const options = {
     port,
     rule,
@@ -15,19 +17,23 @@ exports.start = function(port) {
     wsIntercept: false, // 不开启websocket代理
     silent: true  // Disable AnyProxy native logs
   };
-  const proxyServer = new AnyProxy.ProxyServer(options);
+  proxyServer = new AnyProxy.ProxyServer(options);
   
   proxyServer.on('ready', () => { /* */ });
   proxyServer.on('error', () => { /* */ });
   proxyServer.start();
 
   // AnyProxy.utils.systemProxyMgr.enableGlobalProxy('127.0.0.1', port);
-  systemShell.setProxy(port);
+  await systemShell.setProxy(port);
 };
 
-exports.end = function() {
-  // 用AnyProxy无法关闭https的代理
-  // AnyProxy.utils.systemProxyMgr.disableGlobalProxy();
-  systemShell.deleteProxy();
-  proxyServer.close();
+exports.end = async function() {
+  // Clean up system proxy first
+  await systemShell.deleteProxy();
+  
+  // Then close proxy server
+  if (proxyServer) {
+    proxyServer.close();
+    proxyServer = null;
+  }
 }

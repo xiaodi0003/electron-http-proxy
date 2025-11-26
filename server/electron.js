@@ -134,8 +134,7 @@ app.whenReady().then(async () => {
   createWindow();
 
   /* 启动的时候设置系统代理，启动httpserver */
-  systemShell.setProxy(serverPort);
-  server.start(serverPort);
+  await server.start(serverPort);
 
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
@@ -148,15 +147,38 @@ app.whenReady().then(async () => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
-  if (childProcess.platform !== 'darwin') app.quit();
+  // For this proxy app, we want to quit when all windows are closed on all platforms
+  // to ensure proxy settings are cleaned up
+  app.quit();
 });
 
 /* 程序退出时关掉系统代理 */
-app.on('before-quit', () => {
-  // systemShell.deleteProxy();
-  server.end();
-  // 注销所有快捷键
+let isQuitting = false;
+
+async function cleanup() {
+  if (isQuitting) return;
+  isQuitting = true;
+  
+  console.log('Cleaning up before quit...');
+  
+  try {
+    // Clean up proxy settings and server
+    await server.end();
+    console.log('Proxy cleanup completed');
+  } catch (error) {
+    console.error('Error during cleanup:', error);
+  }
+  
+  // Unregister all shortcuts
   globalShortcut.unregisterAll();
+  
+  console.log('Cleanup finished');
+}
+
+app.on('will-quit', async (event) => {
+  event.preventDefault();
+  await cleanup();
+  app.exit(0);
 });
 
 // In this file you can include the rest of your app's specific main process

@@ -5,7 +5,7 @@ const windows = new Set();
 
 exports.addWindow = window => windows.add(window);
 
-exports.removeWindow = window => windows.remove(window);
+exports.removeWindow = window => windows.delete(window);
 
 exports.serverMessage = function(channel, payload) {
   windows.forEach(window => {

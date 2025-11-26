@@ -64,12 +64,15 @@
             <input
               ref="fileInputRef"
               type="file"
-              webkitdirectory
-              directory
+              :webkitdirectory="selectFileMode === 'folder'"
+              :directory="selectFileMode === 'folder'"
               style="display: none"
               @change="handleSelectFile"
             />
-            <el-button type="text" @click="triggerFileSelect">选择</el-button>
+            <el-button-group>
+              <el-button type="text" @click="triggerFileSelect('file')">选择文件</el-button>
+              <el-button type="text" @click="triggerFileSelect('folder')" style="margin-left: 8px">选择文件夹</el-button>
+            </el-button-group>
           </template>
           <template #append v-if="toProtocol === 'har'">
             <input
@@ -91,7 +94,7 @@
           placeholder="输入要忽略的参数名，多个参数用逗号分隔，如: timestamp,_t"
         />
         <div style="color: #909399; font-size: 12px; margin-top: 4px;">
-          匹配时会忽略这些URL参数，适用于时间戳等动态参数
+          匹配时会忽略这些请求参数，适用于时间戳等动态参数
         </div>
       </el-form-item>
 
@@ -154,6 +157,7 @@ const testUrl = ref('');
 const testResult = ref<{ success: boolean; message: string } | null>(null);
 const fileInputRef = ref<HTMLInputElement>();
 const harFileInputRef = ref<HTMLInputElement>();
+const selectFileMode = ref<'file' | 'folder'>('file');
 
 const getInitReqChangeCode = () => `// 按需修改url、headers、body，可以返回具体的值，也可以返回一个Promise
 // 注意：body如果是json，需要先stringify
@@ -215,7 +219,8 @@ const handleToBlur = () => {
   updateToUrl();
 };
 
-const triggerFileSelect = () => {
+const triggerFileSelect = (mode: 'file' | 'folder') => {
+  selectFileMode.value = mode;
   fileInputRef.value?.click();
 };
 
@@ -259,35 +264,34 @@ const handleSelectFile = (event: Event) => {
   const files = target.files;
   
   if (files && files.length > 0) {
-    // 获取第一个文件的路径
     const file = files[0] as any;
     if (file.path) {
-      // 如果选择的是文件夹，使用文件夹路径
-      // 如果选择的是文件，使用文件路径
       let path = file.path;
       
-      // 如果是文件夹中的文件，提取文件夹路径
-      if (files.length > 1 || file.webkitRelativePath) {
-        // 从 webkitRelativePath 中提取文件夹路径
-        const relativePath = file.webkitRelativePath;
-        if (relativePath) {
-          const folderName = relativePath.split('/')[0];
-          path = file.path.replace(new RegExp(`/${relativePath.split('/').slice(1).join('/')}$`), '');
-          path = path.replace(new RegExp(`/${folderName}$`), '') + '/' + folderName;
+      // If selecting folder mode
+      if (selectFileMode.value === 'folder') {
+        // Extract folder path from webkitRelativePath
+        if (files.length > 1 || file.webkitRelativePath) {
+          const relativePath = file.webkitRelativePath;
+          if (relativePath) {
+            const folderName = relativePath.split('/')[0];
+            path = file.path.replace(new RegExp(`/${relativePath.split('/').slice(1).join('/')}$`), '');
+            path = path.replace(new RegExp(`/${folderName}$`), '') + '/' + folderName;
+          }
+        }
+        // Ensure folder path ends with /
+        if (!path.endsWith('/')) {
+          path += '/';
         }
       }
-      
-      // 确保文件夹路径末尾有 /
-      if (!path.endsWith('/')) {
-        path += '/';
-      }
+      // If selecting file mode, use file path directly without trailing /
       
       toUrl.value = path;
       updateToUrl();
     }
   }
   
-  // 重置 input 以便可以重复选择同一个文件/文件夹
+  // Reset input to allow selecting the same file/folder again
   target.value = '';
 };
 

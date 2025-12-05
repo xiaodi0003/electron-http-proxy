@@ -297,7 +297,10 @@ async function exeProxy(target, requestDetail) {
   // Handle file:// protocol
   if (target.startsWith('file://')) {
     return new Promise(resolve => {
-      const fileName = target.replace('file://', '/').replace(/\?.*/, '');
+      let fileName = target.replace('file://', '/').replace(/\?.*/, '');
+      if (fileName.endsWith('/')) {
+        fileName += 'index.html';
+      }
       fs.readFile(fileName, function(err,data) {
         if(err) {
           resolve({

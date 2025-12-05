@@ -138,9 +138,26 @@ function discernLocalhost(req) {
   }
 }
 
+// Cache enabled settings to avoid repeated filtering
+let enabledSettingsCache = null;
+
+function getEnabledSettings() {
+  if (enabledSettingsCache) {
+    return enabledSettingsCache;
+  }
+  
+  enabledSettingsCache = pSettings.getProxySettings().filter(s => s.enabled);
+  return enabledSettingsCache;
+}
+
+// Clear cache when settings change
+pSettings.onSettingsChange(() => {
+  enabledSettingsCache = null;
+});
+
 exports.proxyReq = async function(requestDetail) {
   discernLocalhost(requestDetail);
-  const setting = pSettings.getProxySettings().filter(s => s.enabled).find(s => findSetting(s, requestDetail));
+  const setting = getEnabledSettings().find(s => findSetting(s, requestDetail));
   if (setting) {
     // Attach HAR data only when needed (for har:// protocol)
     attachHarData(setting);

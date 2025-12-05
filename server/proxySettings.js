@@ -5,8 +5,34 @@ const path = require('path');
 // Separate storage for HAR data to avoid performance issues
 const harDataCache = new Map(); // id -> harData
 
-const getProxySettings = () => get('proxySettings');
-const setProxySettings = proxySettings => set('proxySettings', proxySettings);
+// Cache for proxy settings to avoid repeated reads
+let proxySettingsCache = null;
+let cacheTimestamp = 0;
+const CACHE_TTL = 1000; // Cache for 1 second
+
+const getProxySettings = () => {
+  const now = Date.now();
+  // Use cache if valid
+  if (proxySettingsCache && (now - cacheTimestamp) < CACHE_TTL) {
+    return proxySettingsCache;
+  }
+  
+  // Read from store and update cache
+  proxySettingsCache = get('proxySettings');
+  cacheTimestamp = now;
+  return proxySettingsCache;
+};
+
+const setProxySettings = proxySettings => {
+  // Update cache
+  proxySettingsCache = proxySettings;
+  cacheTimestamp = Date.now();
+  
+  // Write to store (async to avoid blocking)
+  setImmediate(() => {
+    set('proxySettings', proxySettings);
+  });
+};
 
 // Get HAR data by setting id
 const getHarData = (settingId) => harDataCache.get(settingId);
@@ -29,6 +55,16 @@ exports.getProxySettings = getProxySettings;
 exports.getHarData = getHarData;
 exports.setHarData = setHarData;
 
+// Notify listeners when settings change
+const changeListeners = [];
+const notifyChange = () => {
+  changeListeners.forEach(listener => listener());
+};
+
+exports.onSettingsChange = (listener) => {
+  changeListeners.push(listener);
+};
+
 exports.addProxySetting = (setting) => {
   setting.id = `${Date.now()}-${Math.random()}`;
   
@@ -45,6 +81,9 @@ exports.addProxySetting = (setting) => {
     setHarData(setting.id, harData);
   }
   
+  // Notify change
+  notifyChange();
+  
   return Promise.resolve(true);
 };
 
@@ -57,6 +96,9 @@ exports.deleteProxySetting = (setting) => {
     setHarData(setting.id, null);
   }
   
+  // Notify change
+  notifyChange();
+  
   return Promise.resolve(true);
 };
 
@@ -68,6 +110,7 @@ exports.updateProxySetting = (setting) => {
   const proxySettings = getProxySettings();
   const oldSetting = proxySettings.find(s => s.id  === setting.id);
   if (oldSetting) {
+    // Only update changed fields to minimize serialization
     Object.assign(oldSetting, setting);
     setProxySettings(proxySettings);
     
@@ -76,6 +119,10 @@ exports.updateProxySetting = (setting) => {
       setHarData(setting.id, harData);
     }
   }
+  
+  // Notify change
+  notifyChange();
+  
   return Promise.resolve(true);
 };
 
@@ -91,6 +138,7 @@ exports.moveProxySetting = ({ setting, direction }) => {
   if (direction === 'up' && index > 0) {
     [proxySettings[index - 1], proxySettings[index]] = [proxySettings[index], proxySettings[index - 1]];
     setProxySettings(proxySettings);
+    notifyChange();
     return Promise.resolve(true);
   }
   
@@ -98,6 +146,7 @@ exports.moveProxySetting = ({ setting, direction }) => {
   if (direction === 'down' && index < proxySettings.length - 1) {
     [proxySettings[index], proxySettings[index + 1]] = [proxySettings[index + 1], proxySettings[index]];
     setProxySettings(proxySettings);
+    notifyChange();
     return Promise.resolve(true);
   }
   

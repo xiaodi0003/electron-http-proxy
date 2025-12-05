@@ -1,5 +1,116 @@
 // HAR replay functionality
 
+// Cache for indexed HAR data with LRU eviction
+const harIndexCache = new Map();
+const MAX_CACHE_SIZE = 200; // Limit cache size to prevent memory leak
+const cacheAccessOrder = []; // Track access order for LRU
+
+// Generate a normalized key for request matching
+function generateRequestKey(method, url, body, ignoreParams) {
+  const parsedUrl = parseUrl(url, ignoreParams);
+  if (!parsedUrl) return null;
+  
+  // Create key from method, pathname, and sorted params (ignore origin/domain)
+  let key = `${method}:${parsedUrl.pathname}`;
+  
+  const paramsStr = parsedUrl.params.toString();
+  if (paramsStr) {
+    key += `?${paramsStr}`;
+  }
+  
+  // Add body hash for POST/PUT requests
+  if ((method === 'POST' || method === 'PUT') && body && body !== 'null') {
+    key += `:${body}`;
+  }
+  
+  return key;
+}
+
+// Generate cache key from harData
+function generateCacheKey(harData, ignoreParams) {
+  // Use a stable identifier for the HAR data
+  const entriesCount = harData?.log?.entries?.length || 0;
+  const firstUrl = harData?.log?.entries?.[0]?.request?.url || '';
+  const ignoreParamsStr = (ignoreParams || []).join(',');
+  return `${entriesCount}:${firstUrl}:${ignoreParamsStr}`;
+}
+
+// Manage LRU cache
+function updateCache(cacheKey, index) {
+  // Remove from current position if exists
+  const existingIndex = cacheAccessOrder.indexOf(cacheKey);
+  if (existingIndex > -1) {
+    cacheAccessOrder.splice(existingIndex, 1);
+  }
+  
+  // Add to end (most recently used)
+  cacheAccessOrder.push(cacheKey);
+  harIndexCache.set(cacheKey, index);
+  
+  // Evict oldest if cache is too large
+  if (cacheAccessOrder.length > MAX_CACHE_SIZE) {
+    const oldestKey = cacheAccessOrder.shift();
+    harIndexCache.delete(oldestKey);
+  }
+}
+
+// Build index for HAR entries
+function buildHarIndex(harData, ignoreParams) {
+  const cacheKey = generateCacheKey(harData, ignoreParams);
+  
+  // Check if already indexed
+  if (harIndexCache.has(cacheKey)) {
+    // Update access order
+    const existingIndex = cacheAccessOrder.indexOf(cacheKey);
+    if (existingIndex > -1) {
+      cacheAccessOrder.splice(existingIndex, 1);
+      cacheAccessOrder.push(cacheKey);
+    }
+    return harIndexCache.get(cacheKey);
+  }
+  
+  const index = new Map();
+  
+  if (!harData || !harData.log || !harData.log.entries) {
+    return index;
+  }
+  
+  const entries = harData.log.entries;
+  
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i];
+    const method = entry.request.method;
+    const url = entry.request.url;
+    
+    // Normalize body for POST/PUT
+    let bodyKey = '';
+    if ((method === 'POST' || method === 'PUT') && entry.request.postData) {
+      const entryBody = entry.request.postData.text || '';
+      const entryHeaders = entry.request.headers;
+      const contentType = getContentType(entryHeaders);
+      
+      if (contentType.includes('application/x-www-form-urlencoded')) {
+        bodyKey = parseFormData(entryBody, ignoreParams);
+      } else {
+        bodyKey = entryBody;
+      }
+    }
+    
+    const key = generateRequestKey(method, url, bodyKey, ignoreParams);
+    if (key) {
+      // Store first matching entry (can be extended to store all matches)
+      if (!index.has(key)) {
+        index.set(key, entry);
+      }
+    }
+  }
+  
+  // Cache the index with LRU management
+  updateCache(cacheKey, index);
+  
+  return index;
+}
+
 // Parse and normalize URL components
 function parseUrl(url, ignoreParams) {
   try {
@@ -34,8 +145,8 @@ function compareUrls(parsedUrl1, parsedUrl2) {
     return false;
   }
   
-  // Compare origin and pathname
-  if (parsedUrl1.origin !== parsedUrl2.origin || parsedUrl1.pathname !== parsedUrl2.pathname) {
+  // Compare pathname only (ignore origin/domain)
+  if (parsedUrl1.pathname !== parsedUrl2.pathname) {
     return false;
   }
   
@@ -136,21 +247,39 @@ function matchHarEntry(entry, requestDetail, ignoreParams) {
   return true;
 }
 
-// Find matching HAR entry
+// Find matching HAR entry using index
 function findMatchingHarEntry(harData, requestDetail, ignoreParams) {
   if (!harData || !harData.log || !harData.log.entries) {
     return null;
   }
   
-  const entries = harData.log.entries;
+  // Build or get cached index
+  const index = buildHarIndex(harData, ignoreParams);
   
-  for (let i = 0; i < entries.length; i++) {
-    if (matchHarEntry(entries[i], requestDetail, ignoreParams)) {
-      return entries[i];
+  // Generate key for current request
+  const reqMethod = requestDetail._req.method;
+  const reqUrl = requestDetail.url;
+  
+  let bodyKey = '';
+  if ((reqMethod === 'POST' || reqMethod === 'PUT') && requestDetail.requestData) {
+    const reqBody = requestDetail.requestData.toString();
+    const reqHeaders = requestDetail.requestOptions.headers;
+    const contentType = getContentType(reqHeaders);
+    
+    if (contentType.includes('application/x-www-form-urlencoded')) {
+      bodyKey = parseFormData(reqBody, ignoreParams);
+    } else {
+      bodyKey = reqBody;
     }
   }
   
-  return null;
+  const key = generateRequestKey(reqMethod, reqUrl, bodyKey, ignoreParams);
+  if (!key) {
+    return null;
+  }
+  
+  // Fast lookup from index
+  return index.get(key) || null;
 }
 
 // Handle HAR replay
@@ -240,6 +369,13 @@ async function handleHarReplay(setting, requestDetail) {
   });
 }
 
+// Clear cache function for manual cleanup if needed
+function clearHarCache() {
+  harIndexCache.clear();
+  cacheAccessOrder.length = 0;
+}
+
 module.exports = {
-  handleHarReplay
+  handleHarReplay,
+  clearHarCache
 };

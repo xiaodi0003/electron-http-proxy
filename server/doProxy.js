@@ -7,6 +7,17 @@ const {getProtocol, getPort, getDomain, getPath} = require('./utils.js');
 const pSettings = require('./proxySettings.js');
 const { handleHarReplay } = require('./harReplay.js');
 
+// Attach HAR data to setting when needed
+function attachHarData(setting) {
+  if (setting && setting.to && setting.to.startsWith('har://')) {
+    const harData = pSettings.getHarData(setting.id);
+    if (harData) {
+      setting.harData = harData;
+    }
+  }
+  return setting;
+}
+
 // Create proxy agent for backend proxy
 function createProxyAgent(backendProxy, targetProtocol) {
   const { type, host, port, username, password } = backendProxy;
@@ -131,6 +142,8 @@ exports.proxyReq = async function(requestDetail) {
   discernLocalhost(requestDetail);
   const setting = pSettings.getProxySettings().filter(s => s.enabled).find(s => findSetting(s, requestDetail));
   if (setting) {
+    // Attach HAR data only when needed (for har:// protocol)
+    attachHarData(setting);
     requestDetail._req.proxySetting = setting;
     await sleep(setting);
     

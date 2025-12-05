@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 
+const limit = 500;
+
 export interface HttpPackage {
   id: string;
   req?: any;
@@ -30,7 +32,7 @@ export interface ProxySetting {
   resHookCode: string;
   delay: number;
   backendProxy?: BackendProxyConfig; // Optional backend proxy configuration
-  harData?: any; // HAR file data for har:// protocol
+  harFileName?: string; // HAR file name for display (frontend only, not stored in backend)
   harIgnoreParams?: string; // Comma-separated list of parameters to ignore when matching
 }
 
@@ -81,8 +83,8 @@ export const useGlobalStore = defineStore('global', {
       }
       
       // 只保留最后500条
-      if (this.httpPackages.length > 500) {
-        this.httpPackages = this.httpPackages.slice(-500);
+      if (this.httpPackages.length > limit) {
+        this.httpPackages = this.httpPackages.slice(-limit);
       }
     },
 
@@ -93,9 +95,9 @@ export const useGlobalStore = defineStore('global', {
     httpPackageImport(payload: HttpPackage[]) {
       this.httpPackages.push(...payload);
       
-      // Keep only last 500 items
-      if (this.httpPackages.length > 500) {
-        this.httpPackages = this.httpPackages.slice(-500);
+      // Keep only last limit items
+      if (this.httpPackages.length > limit) {
+        this.httpPackages = this.httpPackages.slice(-limit);
       }
     },
 

@@ -182,9 +182,12 @@ const formData = reactive<ProxySetting>({
   resHookCode: props.setting.resHookCode || getInitResChangeCode(),
   delay: props.setting.delay || 0,
   backendProxy: props.setting.backendProxy || { ...DEFAULT_BACKEND_PROXY },
-  harData: props.setting.harData || null,
+  harFileName: props.setting.harFileName || '',
   harIgnoreParams: props.setting.harIgnoreParams || '',
 });
+
+// Store HAR data outside of reactive system to avoid performance issues
+let harDataRef: any = null;
 
 const removeProtocol = (url: string) => url.replace(/^.*?:\/\//, '');
 const getProtocol = (url: string) => url.replace(/(.*?):.*/, '$1');
@@ -245,8 +248,11 @@ const handleSelectHarFile = async (event: Event) => {
       throw new Error('Invalid HAR file format');
     }
     
-    // Store HAR data in formData
-    formData.harData = harData;
+    // Store HAR data outside reactive system
+    harDataRef = harData;
+    
+    // Only store file name in reactive formData
+    formData.harFileName = file.name;
     toUrl.value = file.name;
     updateToUrl();
     
@@ -387,7 +393,12 @@ const handleOk = async () => {
   
   await formRef.value.validate((valid) => {
     if (valid) {
-      emit('ok', { ...formData });
+      // Attach HAR data only when submitting
+      const settingToSave: any = { ...formData };
+      if (harDataRef) {
+        settingToSave.harData = harDataRef;
+      }
+      emit('ok', settingToSave);
     }
   });
 };

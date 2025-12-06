@@ -31,7 +31,6 @@ function getActiveNetworkServices() {
         .filter(line => line && !line.startsWith('An asterisk') && line.trim())
         .map(line => line.trim());
       
-      console.log('Available network services:', services);
       resolve(services.length > 0 ? services : ['Wi-Fi', 'Ethernet']);
     });
   });

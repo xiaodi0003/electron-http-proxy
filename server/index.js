@@ -2,10 +2,17 @@ const AnyProxy = require('anyproxy');
 const rule = require('./rule');
 const systemShell = require('./systemShell');
 const whitelist = require('./whitelist');
+const certManager = require('./certManager');
 
 let proxyServer = null;
 
 exports.start = async function(port) {
+  // Ensure certificate exists before starting proxy
+  const certReady = await certManager.ensureCertificate();
+  if (!certReady) {
+    throw new Error('Failed to initialize certificate for HTTPS proxy');
+  }
+  
   // Sync whitelist with system before starting
   await whitelist.syncWithSystem();
   

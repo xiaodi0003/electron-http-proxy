@@ -260,9 +260,12 @@ const handleSelectHarFile = async (event: Event) => {
     // Store HAR data outside reactive system
     harDataRef = harData;
     
-    // Only store file name in reactive formData
+    // Store file name in reactive formData
     formData.harFileName = file.name;
-    toUrl.value = file.name;
+    
+    // Use full path if available (Electron environment), otherwise use file name
+    const filePath = (file as any).path || file.name;
+    toUrl.value = filePath;
     updateToUrl();
     
     // Reset file input

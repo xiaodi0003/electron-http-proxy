@@ -35,15 +35,34 @@ const setProxySettings = proxySettings => {
 };
 
 // Get HAR data by setting id
-const getHarData = (settingId) => harDataCache.get(settingId);
+const getHarData = (settingId) => {
+  // Check memory cache first
+  if (harDataCache.has(settingId)) {
+    return harDataCache.get(settingId);
+  }
+  
+  // Load from store
+  const allHarData = get('harData') || {};
+  const harData = allHarData[settingId];
+  if (harData) {
+    harDataCache.set(settingId, harData);
+  }
+  return harData;
+};
 
 // Set HAR data for a setting
 const setHarData = (settingId, harData) => {
+  const allHarData = get('harData') || {};
+  
   if (harData) {
     harDataCache.set(settingId, harData);
+    allHarData[settingId] = harData;
   } else {
     harDataCache.delete(settingId);
+    delete allHarData[settingId];
   }
+  
+  set('harData', allHarData);
 };
 
 // init

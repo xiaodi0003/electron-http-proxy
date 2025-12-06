@@ -2,36 +2,51 @@ const {set, get} = require('./store');
 const fs = require('fs');
 const path = require('path');
 
-// Separate storage for HAR data to avoid performance issues
-const harDataCache = new Map(); // id -> harData
+// Get user data directory for storing HAR files
+let HAR_DIR;
+try {
+  const { app } = require('electron');
+  HAR_DIR = path.join(app.getPath('userData'), 'har-files');
+} catch (e) {
+  HAR_DIR = path.join(__dirname, '../.har-files');
+}
+
+// Ensure HAR directory exists
+if (!fs.existsSync(HAR_DIR)) {
+  fs.mkdirSync(HAR_DIR, { recursive: true });
+}
+
+// Simple memory cache for HAR data
+const harDataCache = new Map();
 
 // Cache for proxy settings to avoid repeated reads
 let proxySettingsCache = null;
 let cacheTimestamp = 0;
-const CACHE_TTL = 1000; // Cache for 1 second
+const CACHE_TTL = 1000;
 
 const getProxySettings = () => {
   const now = Date.now();
-  // Use cache if valid
   if (proxySettingsCache && (now - cacheTimestamp) < CACHE_TTL) {
     return proxySettingsCache;
   }
   
-  // Read from store and update cache
   proxySettingsCache = get('proxySettings');
   cacheTimestamp = now;
   return proxySettingsCache;
 };
 
 const setProxySettings = proxySettings => {
-  // Update cache
   proxySettingsCache = proxySettings;
   cacheTimestamp = Date.now();
   
-  // Write to store (async to avoid blocking)
   setImmediate(() => {
     set('proxySettings', proxySettings);
   });
+};
+
+// Get HAR file path for a setting
+const getHarFilePath = (settingId) => {
+  return path.join(HAR_DIR, `${settingId}.har`);
 };
 
 // Get HAR data by setting id
@@ -41,28 +56,46 @@ const getHarData = (settingId) => {
     return harDataCache.get(settingId);
   }
   
-  // Load from store
-  const allHarData = get('harData') || {};
-  const harData = allHarData[settingId];
-  if (harData) {
-    harDataCache.set(settingId, harData);
+  // Load from file system
+  const harFilePath = getHarFilePath(settingId);
+  if (fs.existsSync(harFilePath)) {
+    try {
+      const harData = JSON.parse(fs.readFileSync(harFilePath, 'utf8'));
+      harDataCache.set(settingId, harData);
+      return harData;
+    } catch (e) {
+      console.error(`Failed to load HAR file for setting ${settingId}:`, e);
+    }
   }
-  return harData;
+  
+  return null;
 };
 
 // Set HAR data for a setting
 const setHarData = (settingId, harData) => {
-  const allHarData = get('harData') || {};
+  const harFilePath = getHarFilePath(settingId);
   
   if (harData) {
     harDataCache.set(settingId, harData);
-    allHarData[settingId] = harData;
+    
+    setImmediate(() => {
+      try {
+        fs.writeFileSync(harFilePath, JSON.stringify(harData));
+      } catch (e) {
+        console.error(`Failed to save HAR file for setting ${settingId}:`, e);
+      }
+    });
   } else {
     harDataCache.delete(settingId);
-    delete allHarData[settingId];
+    
+    if (fs.existsSync(harFilePath)) {
+      try {
+        fs.unlinkSync(harFilePath);
+      } catch (e) {
+        console.error(`Failed to delete HAR file for setting ${settingId}:`, e);
+      }
+    }
   }
-  
-  set('harData', allHarData);
 };
 
 // init

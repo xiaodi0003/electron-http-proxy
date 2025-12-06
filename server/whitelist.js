@@ -2,9 +2,31 @@ const { set, get } = require('./store');
 const { getActiveNetworkServices } = require('./systemShell');
 const process = require('child_process');
 
-const getWhitelist = () => get('whitelist') || [];
+let whitelistCache = null;
+let saveTimer = null;
 
-const setWhitelist = (whitelist) => set('whitelist', whitelist);
+const getWhitelist = () => {
+  if (whitelistCache === null) {
+    whitelistCache = get('whitelist') || [];
+  }
+  return whitelistCache;
+};
+
+// Debounced save to disk
+const setWhitelist = (whitelist) => {
+  whitelistCache = whitelist;
+  
+  // Clear existing timer
+  if (saveTimer) {
+    clearTimeout(saveTimer);
+  }
+  
+  // Save to disk after 100ms of no changes
+  saveTimer = setTimeout(() => {
+    set('whitelist', whitelist);
+    saveTimer = null;
+  }, 100);
+};
 
 // Initialize
 if (!get('whitelist')) {

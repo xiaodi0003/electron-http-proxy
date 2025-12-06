@@ -30,5 +30,9 @@ handleElectronMessage((channel: string, payload: any) => {
     globalStore.httpPackageChange(payload);
   } else if (channel === 'proxySettings') {
     globalStore.proxySettingChange(payload);
+  } else if (channel === 'whitelist') {
+    globalStore.whitelistChange(payload);
+  } else if (channel === 'systemProxyBypass') {
+    globalStore.systemProxyBypassChange(payload);
   }
 });

@@ -37,6 +37,8 @@ function getActiveNetworkServices() {
   });
 }
 
+exports.getActiveNetworkServices = getActiveNetworkServices;
+
 exports.setProxy = async (port) => {
   const services = await getActiveNetworkServices();
   
@@ -44,9 +46,11 @@ exports.setProxy = async (port) => {
   services.forEach(service => {
     exec(`networksetup -setwebproxy "${service}" 127.0.0.1 ${port}`);
     exec(`networksetup -setsecurewebproxy "${service}" 127.0.0.1 ${port}`);
-    // Clear bypass domains to ensure localhost requests go through proxy
-    exec(`networksetup -setproxybypassdomains "${service}" ""`);
   });
+  
+  // Note: Do not update whitelist here on startup
+  // Whitelist is synced with system in syncWithSystem()
+  // and only updated when user makes changes
 };
 
 exports.deleteProxy = async () => {

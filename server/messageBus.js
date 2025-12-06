@@ -1,5 +1,6 @@
 const {ipcMain} = require('electron');
 const pSettings = require('./proxySettings.js');
+const whitelist = require('./whitelist.js');
 
 const windows = new Set();
 
@@ -24,4 +25,22 @@ exports.serverMessage = function(channel, payload) {
 
 ipcMain.on('getProxySettings', (event) => {
   event.sender.send('proxySettings', JSON.stringify(pSettings.getProxySettings())); // 在main process里向web page发出message
+});
+
+// Whitelist message handlers
+['addWhitelistItem', 'updateWhitelistItem', 'deleteWhitelistItem'].forEach(channel => {
+  ipcMain.on(channel, (event, arg) => {
+    whitelist[channel](JSON.parse(arg)).then(() => {
+      event.sender.send('whitelist', JSON.stringify(whitelist.getWhitelist()));
+    });
+  });
+});
+
+ipcMain.on('getWhitelist', (event) => {
+  event.sender.send('whitelist', JSON.stringify(whitelist.getWhitelist()));
+});
+
+ipcMain.on('getSystemProxyBypass', async (event) => {
+  const bypassDomains = await whitelist.getSystemProxyBypass();
+  event.sender.send('systemProxyBypass', JSON.stringify(bypassDomains));
 });

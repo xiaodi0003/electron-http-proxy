@@ -18,6 +18,10 @@
           <el-icon><Setting /></el-icon>
           <template #title>{{ t('menu.list.dynamicproxy') }}</template>
         </el-menu-item>
+        <el-menu-item index="/whitelist">
+          <el-icon><List /></el-icon>
+          <template #title>{{ t('menu.list.whitelist') }}</template>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -45,7 +49,7 @@ import { useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useGlobalStore } from '../stores/global';
 import { useI18n } from '../composables/useI18n';
-import { Document, Setting, Fold, Expand } from '@element-plus/icons-vue';
+import { Document, Setting, List, Fold, Expand } from '@element-plus/icons-vue';
 import SelectLang from '../components/SelectLang.vue';
 
 const route = useRoute();

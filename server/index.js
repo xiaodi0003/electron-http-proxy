@@ -1,10 +1,14 @@
 const AnyProxy = require('anyproxy');
 const rule = require('./rule');
 const systemShell = require('./systemShell');
+const whitelist = require('./whitelist');
 
 let proxyServer = null;
 
 exports.start = async function(port) {
+  // Sync whitelist with system before starting
+  await whitelist.syncWithSystem();
+  
   const options = {
     port,
     rule,

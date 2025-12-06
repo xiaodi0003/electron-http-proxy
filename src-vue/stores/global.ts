@@ -36,6 +36,12 @@ export interface ProxySetting {
   harIgnoreParams?: string; // Comma-separated list of parameters to ignore when matching
 }
 
+export interface WhitelistItem {
+  id?: string;
+  enabled: boolean;
+  domain: string; // Domain name or wildcard pattern
+}
+
 export interface HttpListConfig {
   stoped: boolean;
 }
@@ -45,6 +51,8 @@ export interface GlobalState {
   httpPackages: HttpPackage[];
   proxySettings: ProxySetting[];
   httpListConfig: HttpListConfig;
+  whitelistItems: WhitelistItem[];
+  systemProxyBypass: Record<string, string[]>;
 }
 
 export const useGlobalStore = defineStore('global', {
@@ -55,6 +63,8 @@ export const useGlobalStore = defineStore('global', {
     httpListConfig: {
       stoped: false,
     },
+    whitelistItems: [],
+    systemProxyBypass: {},
   }),
 
   actions: {
@@ -107,6 +117,14 @@ export const useGlobalStore = defineStore('global', {
 
     proxySettingChange(payload: ProxySetting[]) {
       this.proxySettings = payload;
+    },
+
+    whitelistChange(payload: WhitelistItem[]) {
+      this.whitelistItems = payload;
+    },
+
+    systemProxyBypassChange(payload: Record<string, string[]>) {
+      this.systemProxyBypass = payload;
     },
   },
 });

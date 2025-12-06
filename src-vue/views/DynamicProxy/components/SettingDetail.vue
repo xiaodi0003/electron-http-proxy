@@ -64,14 +64,20 @@
             <input
               ref="fileInputRef"
               type="file"
-              :webkitdirectory="selectFileMode === 'folder'"
-              :directory="selectFileMode === 'folder'"
               style="display: none"
               @change="handleSelectFile"
             />
+            <input
+              ref="folderInputRef"
+              type="file"
+              webkitdirectory
+              directory
+              style="display: none"
+              @change="handleSelectFolder"
+            />
             <el-button-group>
-              <el-button type="text" @click="triggerFileSelect('file')">选择文件</el-button>
-              <el-button type="text" @click="triggerFileSelect('folder')" style="margin-left: 8px">选择文件夹</el-button>
+              <el-button type="text" @click="triggerFileSelect">选择文件</el-button>
+              <el-button type="text" @click="triggerFolderSelect" style="margin-left: 8px">选择文件夹</el-button>
             </el-button-group>
           </template>
           <template #append v-if="toProtocol === 'har'">
@@ -156,8 +162,8 @@ const showTest = ref(false);
 const testUrl = ref('');
 const testResult = ref<{ success: boolean; message: string } | null>(null);
 const fileInputRef = ref<HTMLInputElement>();
+const folderInputRef = ref<HTMLInputElement>();
 const harFileInputRef = ref<HTMLInputElement>();
-const selectFileMode = ref<'file' | 'folder'>('file');
 
 const getInitReqChangeCode = () => `// 按需修改url、headers、body，可以返回具体的值，也可以返回一个Promise
 // 注意：body如果是json，需要先stringify
@@ -222,9 +228,12 @@ const handleToBlur = () => {
   updateToUrl();
 };
 
-const triggerFileSelect = (mode: 'file' | 'folder') => {
-  selectFileMode.value = mode;
+const triggerFileSelect = () => {
   fileInputRef.value?.click();
+};
+
+const triggerFolderSelect = () => {
+  folderInputRef.value?.click();
 };
 
 const triggerHarFileSelect = () => {
@@ -272,32 +281,49 @@ const handleSelectFile = (event: Event) => {
   if (files && files.length > 0) {
     const file = files[0] as any;
     if (file.path) {
-      let path = file.path;
-      
-      // If selecting folder mode
-      if (selectFileMode.value === 'folder') {
-        // Extract folder path from webkitRelativePath
-        if (files.length > 1 || file.webkitRelativePath) {
-          const relativePath = file.webkitRelativePath;
-          if (relativePath) {
-            const folderName = relativePath.split('/')[0];
-            path = file.path.replace(new RegExp(`/${relativePath.split('/').slice(1).join('/')}$`), '');
-            path = path.replace(new RegExp(`/${folderName}$`), '') + '/' + folderName;
-          }
-        }
-        // Ensure folder path ends with /
-        if (!path.endsWith('/')) {
-          path += '/';
-        }
-      }
-      // If selecting file mode, use file path directly without trailing /
-      
-      toUrl.value = path;
+      toUrl.value = file.path;
       updateToUrl();
     }
   }
   
-  // Reset input to allow selecting the same file/folder again
+  // Reset input to allow selecting the same file again
+  target.value = '';
+};
+
+const handleSelectFolder = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const files = target.files;
+  
+  if (files && files.length > 0) {
+    const file = files[0] as any;
+    if (file.path) {
+      let folderPath = file.path;
+      
+      // Extract folder path from the first file's path
+      if (file.webkitRelativePath) {
+        const relativePath = file.webkitRelativePath;
+        const folderName = relativePath.split('/')[0];
+        // Remove the relative path part to get the base folder path
+        const pathParts = folderPath.split('/');
+        const relativePathParts = relativePath.split('/');
+        // Remove the file name and subfolder parts
+        folderPath = pathParts.slice(0, pathParts.length - relativePathParts.length + 1).join('/') + '/' + folderName;
+      } else {
+        // Fallback: remove the file name to get folder path
+        folderPath = folderPath.substring(0, folderPath.lastIndexOf('/'));
+      }
+      
+      // Ensure folder path ends with /
+      if (!folderPath.endsWith('/')) {
+        folderPath += '/';
+      }
+      
+      toUrl.value = folderPath;
+      updateToUrl();
+    }
+  }
+  
+  // Reset input to allow selecting the same folder again
   target.value = '';
 };
 

@@ -35,7 +35,7 @@
     "start-electron": "export PORT=8001 && electron . --inspect=5858",
     "start-all": "concurrently \"npm run start\" \"npm run start-electron\" ",
     "package": "electron-builder build --mac --publish never",
-    "build-package": "npm run build && npm run package",
+    "build-package": "npm run build:vue && npm run package",
     "anyproxy-ca": "anyproxy-ca",
     "dev:vue": "vite --config vite.config.ts",
     "build:vue": "vite build --config vite.config.ts",

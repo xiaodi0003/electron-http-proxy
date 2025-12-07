@@ -7,7 +7,7 @@ export default defineConfig({
   root: './src-vue',
   base: './',
   build: {
-    outDir: '../dist-vue',
+    outDir: '../build',
     emptyOutDir: true,
   },
   resolve: {
@@ -17,6 +17,6 @@ export default defineConfig({
   },
   server: {
     port: 8001,
-    open: true,
+    // open: true,
   },
 })

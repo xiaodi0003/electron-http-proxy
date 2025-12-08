@@ -6,6 +6,7 @@ export default defineConfig({
   plugins: [vue()],
   root: './src-vue',
   base: './',
+  publicDir: '../public', // Use root public directory for static assets
   build: {
     outDir: '../build',
     emptyOutDir: true,

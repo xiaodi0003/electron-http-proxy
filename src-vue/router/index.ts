@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
+import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router';
 import BasicLayout from '../layouts/BasicLayout.vue';
 import HttpList from '../views/HttpList/index.vue';
 import DynamicProxy from '../views/DynamicProxy/index.vue';
@@ -30,7 +30,7 @@ const routes: RouteRecordRaw[] = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(), // Use hash mode for Electron file:// protocol
   routes,
 });
 

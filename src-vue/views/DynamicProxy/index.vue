@@ -1,5 +1,7 @@
 <template>
   <div>
+    <DynamicProxyOperation />
+    
     <el-table
       :data="proxySettings"
       row-key="id"
@@ -46,6 +48,7 @@ import { storeToRefs } from 'pinia';
 import { useGlobalStore, type ProxySetting, DEFAULT_BACKEND_PROXY } from '../../stores/global';
 import { getProxySettings, updateProxySetting, addProxySetting, deleteProxySetting, moveProxySetting } from '../../api/dynamicProxy';
 import SettingDetail from './components/SettingDetail.vue';
+import DynamicProxyOperation from './components/DynamicProxyOperation.vue';
 
 const globalStore = useGlobalStore();
 const { proxySettings } = storeToRefs(globalStore);

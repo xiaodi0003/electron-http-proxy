@@ -15,18 +15,52 @@ function checkCertificateExists() {
 }
 
 /**
- * Check if root CA is trusted by system
+ * Check if root CA is trusted by system using macOS security command
+ * @returns {Promise<boolean>} true if certificate is trusted
+ */
+async function checkCertificateTrustedBySystem() {
+  return new Promise((resolve) => {
+    const certPath = AnyProxy.utils.certMgr.getRootCAFilePath();
+    
+    // Use macOS security command to verify certificate trust
+    const cmd = `security verify-cert -c "${certPath}" 2>&1`;
+    
+    exec(cmd, (error, stdout, stderr) => {
+      // If verify-cert returns 0, certificate is trusted
+      // If it returns non-zero, certificate is not trusted or not found
+      const isTrusted = !error;
+      console.log(`Certificate trust check (system): ${isTrusted}`);
+      resolve(isTrusted);
+    });
+  });
+}
+
+/**
+ * Check if root CA is trusted by system (combined check)
  * @returns {Promise<boolean>} true if certificate is trusted
  */
 async function checkCertificateTrusted() {
-  return new Promise((resolve) => {
-    AnyProxy.utils.certMgr.ifRootCATrusted((error, trusted) => {
+  return new Promise(async (resolve) => {
+    // First check using AnyProxy's method
+    AnyProxy.utils.certMgr.ifRootCATrusted(async (error, trusted) => {
       if (error) {
         console.error('Error checking certificate trust status:', error);
         resolve(false);
         return;
       }
-      resolve(trusted);
+      
+      console.log(`Certificate trust check (AnyProxy): ${trusted}`);
+      
+      // If AnyProxy says it's trusted, double-check with system command
+      if (trusted) {
+        const systemTrusted = await checkCertificateTrustedBySystem();
+        resolve(systemTrusted);
+      } else {
+        // If AnyProxy says not trusted, also verify with system command
+        // to avoid false negatives
+        const systemTrusted = await checkCertificateTrustedBySystem();
+        resolve(systemTrusted);
+      }
     });
   });
 }

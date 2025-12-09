@@ -304,13 +304,19 @@ const handleSelectFolder = (event: Event) => {
       
       // Extract folder path from the first file's path
       if (file.webkitRelativePath) {
+        // webkitRelativePath format: folderName/subfolder/file.txt
+        // file.path format: /absolute/path/to/folderName/subfolder/file.txt
+        // We need to remove the relative path part to get the folder path
         const relativePath = file.webkitRelativePath;
+        
+        // Remove the relative path from the end of the absolute path
+        if (folderPath.endsWith(relativePath)) {
+          folderPath = folderPath.substring(0, folderPath.length - relativePath.length);
+        }
+        
+        // Add back the folder name (first part of relative path)
         const folderName = relativePath.split('/')[0];
-        // Remove the relative path part to get the base folder path
-        const pathParts = folderPath.split('/');
-        const relativePathParts = relativePath.split('/');
-        // Remove the file name and subfolder parts
-        folderPath = pathParts.slice(0, pathParts.length - relativePathParts.length + 1).join('/') + '/' + folderName;
+        folderPath = folderPath + folderName;
       } else {
         // Fallback: remove the file name to get folder path
         folderPath = folderPath.substring(0, folderPath.lastIndexOf('/'));

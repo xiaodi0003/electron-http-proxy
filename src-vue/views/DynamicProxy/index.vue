@@ -3,6 +3,7 @@
     <DynamicProxyOperation />
     
     <el-table
+      ref="tableRef"
       :data="proxySettings"
       row-key="id"
       :row-class-name="getRowClassName"
@@ -10,6 +11,13 @@
       height="calc(100vh - 180px)"
       style="width: 100%"
     >
+      <el-table-column label="拖动" width="60" class-name="drag-handle">
+        <template #default>
+          <el-icon class="drag-icon" style="cursor: move;">
+            <Rank />
+          </el-icon>
+        </template>
+      </el-table-column>
       <el-table-column prop="type" label="匹配方式" width="100" />
       <el-table-column prop="from" label="From" min-width="200" />
       <el-table-column prop="to" label="To" min-width="200" />
@@ -43,8 +51,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick, watch } from 'vue';
 import { storeToRefs } from 'pinia';
+import { Rank } from '@element-plus/icons-vue';
+import Sortable from 'sortablejs';
 import { useGlobalStore, type ProxySetting, DEFAULT_BACKEND_PROXY } from '../../stores/global';
 import { getProxySettings, updateProxySetting, addProxySetting, deleteProxySetting, moveProxySetting } from '../../api/dynamicProxy';
 import SettingDetail from './components/SettingDetail.vue';
@@ -54,6 +64,8 @@ const globalStore = useGlobalStore();
 const { proxySettings } = storeToRefs(globalStore);
 
 const nowSetting = ref<ProxySetting | null>(null);
+const tableRef = ref();
+let sortableInstance: Sortable | null = null;
 
 const getRowClassName = ({ row }: { row: ProxySetting }) => {
   return row.enabled ? '' : 'disabled';
@@ -115,8 +127,34 @@ const moveDown = (setting: ProxySetting, index: number) => {
   }
 };
 
+const initSortable = () => {
+  nextTick(() => {
+    const tbody = tableRef.value?.$el.querySelector('.el-table__body-wrapper tbody');
+    if (!tbody) return;
+
+    sortableInstance?.destroy();
+    sortableInstance = Sortable.create(tbody, {
+      animation: 150,
+      handle: '.drag-handle',
+      ghostClass: 'sortable-ghost',
+      onEnd: ({ oldIndex, newIndex }) => {
+        if (oldIndex !== newIndex && oldIndex !== undefined && newIndex !== undefined) {
+          const setting = proxySettings.value[oldIndex];
+          const direction = oldIndex < newIndex ? 'down' : 'up';
+          for (let i = 0; i < Math.abs(newIndex - oldIndex); i++) {
+            moveProxySetting(setting, direction);
+          }
+        }
+      },
+    });
+  });
+};
+
+watch(() => proxySettings.value.length, initSortable);
+
 onMounted(() => {
   getProxySettings();
+  initSortable();
 });
 </script>
 
@@ -127,5 +165,23 @@ onMounted(() => {
 
 .operations .el-button+.el-button {
   margin-left: 5px;
+}
+
+.drag-handle {
+  cursor: move;
+}
+
+.drag-icon {
+  font-size: 18px;
+  color: #909399;
+}
+
+.drag-icon:hover {
+  color: #409eff;
+}
+
+.sortable-ghost {
+  opacity: 0.4;
+  background: #f0f9ff;
 }
 </style>

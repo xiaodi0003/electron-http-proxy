@@ -2,19 +2,19 @@ const { set, get } = require('./store');
 const { getActiveNetworkServices } = require('./systemShell');
 const process = require('child_process');
 
-let whitelistCache = null;
+let bypassListCache = null;
 let saveTimer = null;
 
-const getWhitelist = () => {
-  if (whitelistCache === null) {
-    whitelistCache = get('whitelist') || [];
+const getBypassList = () => {
+  if (bypassListCache === null) {
+    bypassListCache = get('bypassList') || [];
   }
-  return whitelistCache;
+  return bypassListCache;
 };
 
 // Debounced save to disk
-const setWhitelist = (whitelist) => {
-  whitelistCache = whitelist;
+const setBypassList = (bypassList) => {
+  bypassListCache = bypassList;
   
   // Clear existing timer
   if (saveTimer) {
@@ -23,40 +23,40 @@ const setWhitelist = (whitelist) => {
   
   // Save to disk after 100ms of no changes
   saveTimer = setTimeout(() => {
-    set('whitelist', whitelist);
+    set('bypassList', bypassList);
     saveTimer = null;
   }, 100);
 };
 
 // Initialize
-if (!get('whitelist')) {
-  setWhitelist([]);
+if (!get('bypassList')) {
+  setBypassList([]);
 }
 
-exports.getWhitelist = getWhitelist;
+exports.getBypassList = getBypassList;
 
-exports.addWhitelistItem = (item) => {
+exports.addBypassListItem = (item) => {
   item.id = `${Date.now()}-${Math.random()}`;
-  const whitelist = getWhitelist();
-  whitelist.push(item);
-  setWhitelist(whitelist);
+  const bypassList = getBypassList();
+  bypassList.push(item);
+  setBypassList(bypassList);
   updateSystemProxyBypass();
   return Promise.resolve(true);
 };
 
-exports.deleteWhitelistItem = (item) => {
-  const whitelist = getWhitelist();
-  setWhitelist(whitelist.filter((w) => w.id !== item.id));
+exports.deleteBypassListItem = (item) => {
+  const bypassList = getBypassList();
+  setBypassList(bypassList.filter((w) => w.id !== item.id));
   updateSystemProxyBypass();
   return Promise.resolve(true);
 };
 
-exports.updateWhitelistItem = (item) => {
-  const whitelist = getWhitelist();
-  const oldItem = whitelist.find((w) => w.id === item.id);
+exports.updateBypassListItem = (item) => {
+  const bypassList = getBypassList();
+  const oldItem = bypassList.find((w) => w.id === item.id);
   if (oldItem) {
     Object.assign(oldItem, item);
-    setWhitelist(whitelist);
+    setBypassList(bypassList);
     updateSystemProxyBypass();
   }
   return Promise.resolve(true);
@@ -64,13 +64,13 @@ exports.updateWhitelistItem = (item) => {
 
 // Update system proxy bypass domains
 async function updateSystemProxyBypass() {
-  const enabledDomains = getWhitelist()
+  const enabledDomains = getBypassList()
     .filter((item) => item.enabled)
     .map((item) => item.domain);
 
   // Only update if there are enabled domains
   if (enabledDomains.length === 0) {
-    console.log('No enabled whitelist domains, skipping system update');
+    console.log('No enabled bypass list domains, skipping system update');
     return;
   }
 
@@ -115,10 +115,10 @@ async function getSystemProxyBypass() {
 
 exports.getSystemProxyBypass = getSystemProxyBypass;
 
-// Sync whitelist with system on startup
+// Sync bypass list with system on startup
 async function syncWithSystem() {
   const systemBypass = await getSystemProxyBypass();
-  const whitelist = getWhitelist();
+  const bypassList = getBypassList();
   
   // Collect all system domains
   const systemDomains = new Set();
@@ -126,40 +126,40 @@ async function syncWithSystem() {
     domains.forEach((domain) => systemDomains.add(domain));
   });
   
-  // Update whitelist items based on system state
+  // Update bypass list items based on system state
   let hasChanges = false;
-  whitelist.forEach((item) => {
+  bypassList.forEach((item) => {
     const isInSystem = systemDomains.has(item.domain);
     if (item.enabled && !isInSystem) {
       // Item is enabled in app but not in system, disable it
       item.enabled = false;
       hasChanges = true;
-      console.log(`Disabled whitelist item not in system: ${item.domain}`);
+      console.log(`Disabled bypass list item not in system: ${item.domain}`);
     } else if (!item.enabled && isInSystem) {
       // Item is disabled in app but exists in system, enable it
       item.enabled = true;
       hasChanges = true;
-      console.log(`Enabled whitelist item found in system: ${item.domain}`);
+      console.log(`Enabled bypass list item found in system: ${item.domain}`);
     }
   });
   
-  // Add system domains that are not in whitelist
-  const whitelistDomains = new Set(whitelist.map((item) => item.domain));
+  // Add system domains that are not in bypass list
+  const bypassListDomains = new Set(bypassList.map((item) => item.domain));
   systemDomains.forEach((domain) => {
-    if (!whitelistDomains.has(domain)) {
-      whitelist.push({
+    if (!bypassListDomains.has(domain)) {
+      bypassList.push({
         id: `${Date.now()}-${Math.random()}`,
         enabled: true,
         domain: domain,
       });
       hasChanges = true;
-      console.log(`Added system domain to whitelist: ${domain}`);
+      console.log(`Added system domain to bypass list: ${domain}`);
     }
   });
   
   if (hasChanges) {
-    setWhitelist(whitelist);
-    console.log('Whitelist synced with system');
+    setBypassList(bypassList);
+    console.log('Bypass list synced with system');
   }
 }
 

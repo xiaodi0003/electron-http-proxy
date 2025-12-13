@@ -1,5 +1,5 @@
 const { ipcRenderer } = (window as any).require('electron');
-const channelList = ['req', 'res', 'proxySettings', 'whitelist', 'systemProxyBypass'];
+const channelList = ['req', 'res', 'proxySettings', 'bypassList', 'systemProxyBypass'];
 
 export function handleElectronMessage(callback: (channel: string, payload: any) => void) {
   channelList.forEach(channel => {

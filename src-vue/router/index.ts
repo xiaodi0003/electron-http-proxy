@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-rou
 import BasicLayout from '../layouts/BasicLayout.vue';
 import HttpList from '../views/HttpList/index.vue';
 import DynamicProxy from '../views/DynamicProxy/index.vue';
-import Whitelist from '../views/Whitelist/index.vue';
+import BypassList from '../views/BypassList/index.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -21,9 +21,9 @@ const routes: RouteRecordRaw[] = [
         component: DynamicProxy,
       },
       {
-        path: '/whitelist',
-        name: 'Whitelist',
-        component: Whitelist,
+        path: '/bypasslist',
+        name: 'BypassList',
+        component: BypassList,
       },
     ],
   },

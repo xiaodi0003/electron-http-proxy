@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="visible"
-    :title="item.id ? '编辑白名单' : '添加白名单'"
+    :title="item.id ? '编辑代理例外' : '添加代理例外'"
     width="600px"
     @close="handleCancel"
   >
@@ -36,21 +36,21 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
-import type { WhitelistItem } from '../../../stores/global';
+import type { BypassListItem } from '../../../stores/global';
 
 const props = defineProps<{
-  item: WhitelistItem;
+  item: BypassListItem;
 }>();
 
 const emit = defineEmits<{
-  ok: [item: WhitelistItem];
+  ok: [item: BypassListItem];
   cancel: [];
 }>();
 
 const visible = ref(true);
 const formRef = ref<FormInstance>();
 
-const formData = reactive<WhitelistItem>({
+const formData = reactive<BypassListItem>({
   id: props.item.id,
   enabled: props.item.enabled !== false,
   domain: props.item.domain || '',

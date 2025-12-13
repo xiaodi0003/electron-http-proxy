@@ -2,10 +2,10 @@
   <div style="display: flex; flex-direction: column; height: calc(100vh - 64px);">
     <div style="flex: 1; overflow: auto;">
       <el-table
-        :data="whitelistItems"
+        :data="bypassListItems"
         row-key="id"
         :row-class-name="getRowClassName"
-        class="whitelist"
+        class="bypasslist"
         height="calc(100vh - 320px)"
         style="width: 100%"
       >
@@ -34,10 +34,10 @@
 
     <div style="border-top: 1px solid #e8e8e8; padding: 16px; background: #fafafa; max-height: 200px; overflow-y: auto;">
       <div style="font-weight: 600; margin-bottom: 8px; color: #606266;">
-        系统当前白名单 (每5秒自动刷新)
+        系统当前代理例外 (每5秒自动刷新)
       </div>
       <div v-if="Object.keys(systemProxyBypass).length === 0" style="color: #909399; font-size: 14px;">
-        暂无系统白名单
+        暂无系统代理例外
       </div>
       <div v-else>
         <div v-for="(domains, service) in systemProxyBypass" :key="service" style="margin-bottom: 12px;">
@@ -56,7 +56,7 @@
       </div>
     </div>
 
-    <WhitelistDialog
+    <BypassListDialog
       v-if="nowItem"
       :item="nowItem"
       @ok="handleSave"
@@ -68,21 +68,21 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useGlobalStore, type WhitelistItem } from '../../stores/global';
-import { getWhitelist, updateWhitelistItem, addWhitelistItem, deleteWhitelistItem, getSystemProxyBypass } from '../../api/whitelist';
-import WhitelistDialog from './components/WhitelistDialog.vue';
+import { useGlobalStore, type BypassListItem } from '../../stores/global';
+import { getBypassList, updateBypassListItem, addBypassListItem, deleteBypassListItem, getSystemProxyBypass } from '../../api/bypassList';
+import BypassListDialog from './components/BypassListDialog.vue';
 
 const globalStore = useGlobalStore();
-const { whitelistItems, systemProxyBypass } = storeToRefs(globalStore);
+const { bypassListItems, systemProxyBypass } = storeToRefs(globalStore);
 
-const nowItem = ref<WhitelistItem | null>(null);
+const nowItem = ref<BypassListItem | null>(null);
 let refreshTimer: number | null = null;
 
-const getRowClassName = ({ row }: { row: WhitelistItem }) => {
+const getRowClassName = ({ row }: { row: BypassListItem }) => {
   return row.enabled ? '' : 'disabled';
 };
 
-const editItem = (item: WhitelistItem) => {
+const editItem = (item: BypassListItem) => {
   nowItem.value = { ...item };
 };
 
@@ -93,27 +93,27 @@ const addItem = () => {
   };
 };
 
-const toggleEnabled = (item: WhitelistItem) => {
+const toggleEnabled = (item: BypassListItem) => {
   handleSave({ ...item, enabled: !item.enabled });
 };
 
-const handleDelete = (item: WhitelistItem) => {
-  deleteWhitelistItem(item);
+const handleDelete = (item: BypassListItem) => {
+  deleteBypassListItem(item);
 };
 
-const handleSave = (item: WhitelistItem) => {
+const handleSave = (item: BypassListItem) => {
   if (item) {
     if (item.id) {
-      updateWhitelistItem(item);
+      updateBypassListItem(item);
     } else {
-      addWhitelistItem(item);
+      addBypassListItem(item);
     }
   }
   nowItem.value = null;
 };
 
 onMounted(() => {
-  getWhitelist();
+  getBypassList();
   getSystemProxyBypass();
   
   // Refresh system proxy bypass every 5 seconds
@@ -130,7 +130,7 @@ onUnmounted(() => {
 </script>
 
 <style>
-.whitelist .disabled {
+.bypasslist .disabled {
   opacity: 0.5;
 }
 </style>

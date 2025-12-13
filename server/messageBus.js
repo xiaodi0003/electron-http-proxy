@@ -1,6 +1,6 @@
 const {ipcMain} = require('electron');
 const pSettings = require('./proxySettings.js');
-const whitelist = require('./whitelist.js');
+const bypassList = require('./bypassList.js');
 
 const windows = new Set();
 
@@ -27,20 +27,20 @@ ipcMain.on('getProxySettings', (event) => {
   event.sender.send('proxySettings', JSON.stringify(pSettings.getProxySettings())); // 在main process里向web page发出message
 });
 
-// Whitelist message handlers
-['addWhitelistItem', 'updateWhitelistItem', 'deleteWhitelistItem'].forEach(channel => {
+// Bypass list message handlers
+['addBypassListItem', 'updateBypassListItem', 'deleteBypassListItem'].forEach(channel => {
   ipcMain.on(channel, (event, arg) => {
-    whitelist[channel](JSON.parse(arg)).then(() => {
-      event.sender.send('whitelist', JSON.stringify(whitelist.getWhitelist()));
+    bypassList[channel](JSON.parse(arg)).then(() => {
+      event.sender.send('bypassList', JSON.stringify(bypassList.getBypassList()));
     });
   });
 });
 
-ipcMain.on('getWhitelist', (event) => {
-  event.sender.send('whitelist', JSON.stringify(whitelist.getWhitelist()));
+ipcMain.on('getBypassList', (event) => {
+  event.sender.send('bypassList', JSON.stringify(bypassList.getBypassList()));
 });
 
 ipcMain.on('getSystemProxyBypass', async (event) => {
-  const bypassDomains = await whitelist.getSystemProxyBypass();
+  const bypassDomains = await bypassList.getSystemProxyBypass();
   event.sender.send('systemProxyBypass', JSON.stringify(bypassDomains));
 });

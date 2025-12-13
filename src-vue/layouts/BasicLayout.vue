@@ -18,9 +18,9 @@
           <el-icon><Setting /></el-icon>
           <template #title>{{ t('menu.list.dynamicproxy') }}</template>
         </el-menu-item>
-        <el-menu-item index="/whitelist">
+        <el-menu-item index="/bypasslist">
           <el-icon><List /></el-icon>
-          <template #title>{{ t('menu.list.whitelist') }}</template>
+          <template #title>{{ t('menu.list.bypasslist') }}</template>
         </el-menu-item>
       </el-menu>
     </el-aside>

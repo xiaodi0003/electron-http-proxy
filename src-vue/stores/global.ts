@@ -37,7 +37,7 @@ export interface ProxySetting {
   useOriginalDelay?: boolean; // Use original delay from HAR file (default: true)
 }
 
-export interface WhitelistItem {
+export interface BypassListItem {
   id?: string;
   enabled: boolean;
   domain: string; // Domain name or wildcard pattern
@@ -52,7 +52,7 @@ export interface GlobalState {
   httpPackages: HttpPackage[];
   proxySettings: ProxySetting[];
   httpListConfig: HttpListConfig;
-  whitelistItems: WhitelistItem[];
+  bypassListItems: BypassListItem[];
   systemProxyBypass: Record<string, string[]>;
 }
 
@@ -64,7 +64,7 @@ export const useGlobalStore = defineStore('global', {
     httpListConfig: {
       stoped: false,
     },
-    whitelistItems: [],
+    bypassListItems: [],
     systemProxyBypass: {},
   }),
 
@@ -120,8 +120,8 @@ export const useGlobalStore = defineStore('global', {
       this.proxySettings = payload;
     },
 
-    whitelistChange(payload: WhitelistItem[]) {
-      this.whitelistItems = payload;
+    bypassListChange(payload: BypassListItem[]) {
+      this.bypassListItems = payload;
     },
 
     systemProxyBypassChange(payload: Record<string, string[]>) {

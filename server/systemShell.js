@@ -47,8 +47,8 @@ exports.setProxy = async (port) => {
     exec(`networksetup -setsecurewebproxy "${service}" 127.0.0.1 ${port}`);
   });
   
-  // Note: Do not update whitelist here on startup
-  // Whitelist is synced with system in syncWithSystem()
+  // Note: Do not update bypass list here on startup
+  // Bypass list is synced with system in syncWithSystem()
   // and only updated when user makes changes
 };
 

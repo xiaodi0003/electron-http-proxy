@@ -1,11 +1,11 @@
 <template>
   <div class="dynamicproxy-operation">
-    <el-tooltip content="导出配置">
+    <el-tooltip :content="t('dynamicProxy.exportConfig')">
       <el-icon :size="24" @click="handleExport" style="cursor: pointer; margin-right: 16px;">
         <Download />
       </el-icon>
     </el-tooltip>
-    <el-tooltip content="导入配置">
+    <el-tooltip :content="t('dynamicProxy.importConfig')">
       <el-icon :size="24" @click="triggerFileInput" style="cursor: pointer;">
         <Upload />
       </el-icon>
@@ -25,11 +25,13 @@ import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Download, Upload } from '@element-plus/icons-vue';
-import { useGlobalStore, type ProxySetting } from '../../../stores/global';
+import { useGlobalStore } from '../../../stores/global';
 import { getProxySettings, addProxySetting, deleteProxySetting } from '../../../api/dynamicProxy';
+import { useI18n } from '../../../composables/useI18n';
 
 const globalStore = useGlobalStore();
 const { proxySettings } = storeToRefs(globalStore);
+const { t } = useI18n();
 
 const fileInputRef = ref<HTMLInputElement | null>(null);
 
@@ -46,9 +48,9 @@ const handleExport = () => {
     link.download = `proxy-settings-${Date.now()}.json`;
     link.click();
     URL.revokeObjectURL(url);
-    ElMessage.success('配置导出成功');
+    ElMessage.success(t('dynamicProxy.exportSuccess'));
   } catch (error) {
-    ElMessage.error('导出失败: ' + (error instanceof Error ? error.message : '未知错误'));
+    ElMessage.error(t('dynamicProxy.exportFail') + ': ' + (error instanceof Error ? error.message : t('dynamicProxy.unknownError')));
   }
 };
 
@@ -71,16 +73,16 @@ const handleFileChange = async (event: Event) => {
     const importedSettings = JSON.parse(text);
     
     if (!Array.isArray(importedSettings)) {
-      throw new Error('配置文件格式错误');
+      throw new Error(t('dynamicProxy.configFormatError'));
     }
     
     // Confirm before importing
     await ElMessageBox.confirm(
-      `确定要导入 ${importedSettings.length} 条配置吗？这将替换当前所有配置。`,
-      '确认导入',
+      t('dynamicProxy.importConfirm').replace('{count}', String(importedSettings.length)),
+      t('dynamicProxy.importConfirmTitle'),
       {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+        confirmButtonText: t('common.ok'),
+        cancelButtonText: t('common.cancel'),
         type: 'warning',
       }
     );
@@ -95,10 +97,10 @@ const handleFileChange = async (event: Event) => {
     }
     
     await getProxySettings();
-    ElMessage.success('配置导入成功');
+    ElMessage.success(t('dynamicProxy.importSuccess'));
   } catch (error) {
     if (error !== 'cancel') {
-      ElMessage.error('导入失败: ' + (error instanceof Error ? error.message : '未知错误'));
+      ElMessage.error(t('dynamicProxy.importFail') + ': ' + (error instanceof Error ? error.message : t('dynamicProxy.unknownError')));
     }
   } finally {
     // Reset file input

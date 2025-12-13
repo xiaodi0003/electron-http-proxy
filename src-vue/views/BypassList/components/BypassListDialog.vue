@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="visible"
-    :title="item.id ? '编辑代理例外' : '添加代理例外'"
+    :title="item.id ? t('bypassList.editTitle') : t('bypassList.addTitle')"
     width="600px"
     @close="handleCancel"
   >
@@ -11,24 +11,24 @@
       :rules="rules"
       label-width="100px"
     >
-      <el-form-item label="启用" prop="enabled">
+      <el-form-item :label="t('common.enabled')" prop="enabled">
         <el-switch v-model="formData.enabled" />
       </el-form-item>
 
-      <el-form-item label="域名" prop="domain">
+      <el-form-item :label="t('bypassList.domain')" prop="domain">
         <el-input 
           v-model="formData.domain" 
-          placeholder="例如: example.com 或 *.example.com"
+          :placeholder="t('bypassList.domainPlaceholder')"
         />
         <div style="color: #909399; font-size: 12px; margin-top: 4px;">
-          支持精确域名或通配符，如: *outlook*, example.com
+          {{ t('bypassList.domainHint') }}
         </div>
       </el-form-item>
     </el-form>
 
     <template #footer>
-      <el-button @click="handleCancel">取消</el-button>
-      <el-button type="primary" @click="handleOk">确定</el-button>
+      <el-button @click="handleCancel">{{ t('common.cancel') }}</el-button>
+      <el-button type="primary" @click="handleOk">{{ t('common.ok') }}</el-button>
     </template>
   </el-dialog>
 </template>
@@ -37,6 +37,7 @@
 import { ref, reactive } from 'vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import type { BypassListItem } from '../../../stores/global';
+import { useI18n } from '../../../composables/useI18n';
 
 const props = defineProps<{
   item: BypassListItem;
@@ -47,6 +48,7 @@ const emit = defineEmits<{
   cancel: [];
 }>();
 
+const { t } = useI18n();
 const visible = ref(true);
 const formRef = ref<FormInstance>();
 
@@ -58,11 +60,11 @@ const formData = reactive<BypassListItem>({
 
 const rules: FormRules = {
   domain: [
-    { required: true, message: '域名不能为空', trigger: 'blur' },
+    { required: true, message: t('bypassList.domainRequired'), trigger: 'blur' },
     {
       validator: (_rule, value, callback) => {
         if (!value || value.trim() === '') {
-          callback(new Error('域名不能为空'));
+          callback(new Error(t('bypassList.domainRequired')));
           return;
         }
         const trimmed = value.trim();
@@ -71,7 +73,7 @@ const rules: FormRules = {
         const pattern = /^[\*a-zA-Z0-9][\*a-zA-Z0-9.-]*[\*a-zA-Z0-9]$|^[\*a-zA-Z0-9]$/;
         
         if (!pattern.test(trimmed)) {
-          callback(new Error('域名格式不正确'));
+          callback(new Error(t('bypassList.domainFormatError')));
           return;
         }
         callback();

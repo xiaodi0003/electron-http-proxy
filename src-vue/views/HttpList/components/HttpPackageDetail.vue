@@ -7,14 +7,14 @@
     @close="handleClose"
   >
     <div v-if="detail?.req">
-      <h3>请求</h3>
+      <h3>{{ t('httpList.request') }}</h3>
       <el-tabs>
-        <el-tab-pane label="Request">
+        <el-tab-pane :label="t('httpList.request')">
           <div class="httprequest">
             {{ `${detail.req.method} ${getPath(detail.req.url)} HTTP/${detail.req.httpVersion}` }}
           </div>
         </el-tab-pane>
-        <el-tab-pane label="Header">
+        <el-tab-pane :label="t('httpList.header')">
           <div class="httpheader">
             <div v-for="[key, value] in Object.entries(detail.req.headers || {})" :key="key">
               <span>{{ key }}:</span>
@@ -22,10 +22,10 @@
             </div>
           </div>
         </el-tab-pane>
-        <el-tab-pane v-if="!isGet" label="Body">
+        <el-tab-pane v-if="!isGet" :label="t('httpList.body')">
           <pre class="httpbody">{{ getBodyStr(detail.req) }}</pre>
         </el-tab-pane>
-        <el-tab-pane v-if="!isGet && isJson(detail.req)" label="JSON Body">
+        <el-tab-pane v-if="!isGet && isJson(detail.req)" :label="t('httpList.jsonBody')">
           <div class="httpbody">
             <pre>{{ formatJson(detail.req.body) }}</pre>
           </div>
@@ -34,14 +34,14 @@
     </div>
 
     <div v-if="detail?.res">
-      <h3>响应</h3>
+      <h3>{{ t('httpList.response') }}</h3>
       <el-tabs>
-        <el-tab-pane label="Response">
+        <el-tab-pane :label="t('httpList.response')">
           <div class="httprequest">
             {{ `HTTP/${detail.res.httpVersion} ${detail.res.statusCode} ${detail.res.statusMessage}` }}
           </div>
         </el-tab-pane>
-        <el-tab-pane label="Header">
+        <el-tab-pane :label="t('httpList.header')">
           <div class="httpheader">
             <div v-for="[key, value] in Object.entries(detail.res.headers || {})" :key="key">
               <span>{{ key }}:</span>
@@ -49,15 +49,15 @@
             </div>
           </div>
         </el-tab-pane>
-        <el-tab-pane v-if="detail.res.body" label="Body">
+        <el-tab-pane v-if="detail.res.body" :label="t('httpList.body')">
           <pre class="httpbody">{{ getBodyStr(detail.res) }}</pre>
         </el-tab-pane>
-        <el-tab-pane v-if="isJson(detail.res) && !detail.res.err" label="JSON Body">
+        <el-tab-pane v-if="isJson(detail.res) && !detail.res.err" :label="t('httpList.jsonBody')">
           <div class="httpbody">
             <pre>{{ formatJson(detail.res.body) }}</pre>
           </div>
         </el-tab-pane>
-        <el-tab-pane v-if="detail.res.err" label="Err">
+        <el-tab-pane v-if="detail.res.err" :label="t('httpList.error')">
           <pre class="httpbody">{{ detail.res.err }}</pre>
         </el-tab-pane>
       </el-tabs>
@@ -68,6 +68,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { getPath } from '../../../utils/utils';
+import { useI18n } from '../../../composables/useI18n';
 import type { HttpPackage } from '../../../stores/global';
 
 const props = defineProps<{
@@ -78,6 +79,7 @@ const emit = defineEmits<{
   close: [];
 }>();
 
+const { t } = useI18n();
 const visible = ref(true);
 
 const isGet = computed(() => {

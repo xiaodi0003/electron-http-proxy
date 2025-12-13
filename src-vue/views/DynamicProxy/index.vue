@@ -11,26 +11,26 @@
       height="calc(100vh - 180px)"
       style="width: 100%"
     >
-      <el-table-column label="拖动" width="60" class-name="drag-handle">
+      <el-table-column :label="t('common.drag')" width="60" class-name="drag-handle">
         <template #default>
           <el-icon class="drag-icon" style="cursor: move;">
             <Rank />
           </el-icon>
         </template>
       </el-table-column>
-      <el-table-column prop="type" label="匹配方式" width="100" />
+      <el-table-column prop="type" :label="t('dynamicProxy.matchType')" width="100" />
       <el-table-column prop="from" label="From" min-width="200" />
       <el-table-column prop="to" label="To" min-width="200" />
-      <el-table-column label="操作" width="350" class-name="operations">
+      <el-table-column :label="t('common.operation')" width="350" class-name="operations">
         <template #default="{ row, $index }">
           <div style="white-space: nowrap;">
-            <el-button link type="primary" @click="moveUp(row, $index)" :disabled="$index === 0">上移</el-button>
-            <el-button link type="primary" @click="moveDown(row, $index)" :disabled="$index === proxySettings.length - 1">下移</el-button>
-            <el-button link type="primary" @click="editSetting(row)">Edit</el-button>
-            <el-button link type="danger" @click="handleDelete(row)">Delete</el-button>
-            <el-button link type="primary" @click="copySetting(row)">Copy</el-button>
+            <el-button link type="primary" @click="moveUp(row, $index)" :disabled="$index === 0">{{ t('common.moveUp') }}</el-button>
+            <el-button link type="primary" @click="moveDown(row, $index)" :disabled="$index === proxySettings.length - 1">{{ t('common.moveDown') }}</el-button>
+            <el-button link type="primary" @click="editSetting(row)">{{ t('common.edit') }}</el-button>
+            <el-button link type="danger" @click="handleDelete(row)">{{ t('common.delete') }}</el-button>
+            <el-button link type="primary" @click="copySetting(row)">{{ t('common.copy') }}</el-button>
             <el-button link type="primary" @click="toggleEnabled(row)">
-              {{ row.enabled ? 'Disable' : 'Enable' }}
+              {{ row.enabled ? t('common.disable') : t('common.enable') }}
             </el-button>
           </div>
         </template>
@@ -38,7 +38,7 @@
     </el-table>
     
     <div style="padding: 16px;">
-      <el-button type="primary" @click="addSetting">Add</el-button>
+      <el-button type="primary" @click="addSetting">{{ t('common.add') }}</el-button>
     </div>
 
     <SettingDetail
@@ -57,11 +57,13 @@ import { Rank } from '@element-plus/icons-vue';
 import Sortable from 'sortablejs';
 import { useGlobalStore, type ProxySetting, DEFAULT_BACKEND_PROXY } from '../../stores/global';
 import { getProxySettings, updateProxySetting, addProxySetting, deleteProxySetting, moveProxySetting } from '../../api/dynamicProxy';
+import { useI18n } from '../../composables/useI18n';
 import SettingDetail from './components/SettingDetail.vue';
 import DynamicProxyOperation from './components/DynamicProxyOperation.vue';
 
 const globalStore = useGlobalStore();
 const { proxySettings } = storeToRefs(globalStore);
+const { t } = useI18n();
 
 const nowSetting = ref<ProxySetting | null>(null);
 const tableRef = ref();

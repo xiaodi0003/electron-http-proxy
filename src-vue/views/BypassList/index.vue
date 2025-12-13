@@ -9,18 +9,18 @@
         height="calc(100vh - 320px)"
         style="width: 100%"
       >
-        <el-table-column prop="domain" label="域名" min-width="300">
+        <el-table-column prop="domain" :label="t('bypassList.domain')" min-width="300">
           <template #default="{ row }">
             <span>{{ row.domain }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="250">
+        <el-table-column :label="t('common.operation')" width="250">
           <template #default="{ row }">
             <div style="white-space: nowrap;">
-              <el-button link type="primary" @click="editItem(row)">编辑</el-button>
-              <el-button link type="danger" @click="handleDelete(row)">删除</el-button>
+              <el-button link type="primary" @click="editItem(row)">{{ t('common.edit') }}</el-button>
+              <el-button link type="danger" @click="handleDelete(row)">{{ t('common.delete') }}</el-button>
               <el-button link type="primary" @click="toggleEnabled(row)">
-                {{ row.enabled ? '禁用' : '启用' }}
+                {{ row.enabled ? t('common.disable') : t('common.enable') }}
               </el-button>
             </div>
           </template>
@@ -28,16 +28,16 @@
       </el-table>
       
       <div style="padding: 16px;">
-        <el-button type="primary" @click="addItem">添加</el-button>
+        <el-button type="primary" @click="addItem">{{ t('common.add') }}</el-button>
       </div>
     </div>
 
     <div style="border-top: 1px solid #e8e8e8; padding: 16px; background: #fafafa; max-height: 200px; overflow-y: auto;">
       <div style="font-weight: 600; margin-bottom: 8px; color: #606266;">
-        系统当前代理例外 (每5秒自动刷新)
+        {{ t('bypassList.systemProxyBypass') }}
       </div>
       <div v-if="Object.keys(systemProxyBypass).length === 0" style="color: #909399; font-size: 14px;">
-        暂无系统代理例外
+        {{ t('bypassList.noSystemProxyBypass') }}
       </div>
       <div v-else>
         <div v-for="(domains, service) in systemProxyBypass" :key="service" style="margin-bottom: 12px;">
@@ -70,10 +70,12 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useGlobalStore, type BypassListItem } from '../../stores/global';
 import { getBypassList, updateBypassListItem, addBypassListItem, deleteBypassListItem, getSystemProxyBypass } from '../../api/bypassList';
+import { useI18n } from '../../composables/useI18n';
 import BypassListDialog from './components/BypassListDialog.vue';
 
 const globalStore = useGlobalStore();
 const { bypassListItems, systemProxyBypass } = storeToRefs(globalStore);
+const { t } = useI18n();
 
 const nowItem = ref<BypassListItem | null>(null);
 let refreshTimer: number | null = null;

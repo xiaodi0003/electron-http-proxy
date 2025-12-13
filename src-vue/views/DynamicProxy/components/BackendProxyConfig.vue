@@ -1,15 +1,15 @@
 <template>
   <div class="backend-proxy-config">
-    <el-form-item label="后端代理类型" prop="backendProxy.type">
+    <el-form-item :label="t('dynamicProxy.backendProxyType')" prop="backendProxy.type">
       <el-radio-group v-model="localConfig.type" @change="handleTypeChange">
-        <el-radio label="direct">直接连接</el-radio>
+        <el-radio label="direct">{{ t('dynamicProxy.backendProxyDirect') }}</el-radio>
         <el-radio label="http">HTTP</el-radio>
         <el-radio label="socks5">SOCKS5</el-radio>
       </el-radio-group>
     </el-form-item>
 
     <el-form-item 
-      label="代理服务器" 
+      :label="t('dynamicProxy.backendProxyServer')" 
       prop="backendProxy.host"
       v-if="localConfig.type !== 'direct'"
     >
@@ -17,14 +17,14 @@
         <el-input
           v-model="localConfig.host"
           :disabled="localConfig.type === 'direct'"
-          placeholder="例如: 127.0.0.1 或 proxy.example.com"
+          :placeholder="t('dynamicProxy.backendProxyServerPlaceholder')"
           @input="handleChange"
           style="flex: 1;"
         />
         <el-input
           v-model="localConfig.port"
           :disabled="localConfig.type === 'direct'"
-          placeholder="端口"
+          :placeholder="t('dynamicProxy.backendProxyPort')"
           @input="handlePortChange"
           @blur="validatePort"
           style="width: 120px;"
@@ -41,6 +41,7 @@
 import { reactive, watch, ref } from 'vue';
 import type { BackendProxyConfig } from '../../../stores/global';
 import { DEFAULT_BACKEND_PROXY } from '../../../stores/global';
+import { useI18n } from '../../../composables/useI18n';
 
 const props = defineProps<{
   modelValue: BackendProxyConfig;
@@ -49,6 +50,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:modelValue': [value: BackendProxyConfig];
 }>();
+
+const { t } = useI18n();
 
 // Create local reactive copy of the config
 const localConfig = reactive<BackendProxyConfig>({
@@ -68,13 +71,13 @@ const validatePort = () => {
   
   const port = localConfig.port;
   if (!port) {
-    portError.value = '端口号不能为空';
+    portError.value = t('dynamicProxy.backendProxyPortError');
     return;
   }
   
   const portNum = Number(port);
   if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
-    portError.value = '端口号必须在 1-65535 之间';
+    portError.value = t('dynamicProxy.backendProxyPortRangeError');
     return;
   }
 };

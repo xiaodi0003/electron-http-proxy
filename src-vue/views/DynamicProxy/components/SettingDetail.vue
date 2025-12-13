@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="visible"
-    :title="setting.id ? 'Edit' : 'Add'"
+    :title="setting.id ? t('common.edit') : t('common.add')"
     width="900px"
     @close="handleCancel"
   >
@@ -11,11 +11,11 @@
       :rules="rules"
       label-width="120px"
     >
-      <el-form-item label="启用" prop="enabled">
+      <el-form-item :label="t('common.enabled')" prop="enabled">
         <el-switch v-model="formData.enabled" />
       </el-form-item>
 
-      <el-form-item label="配置类型" prop="type">
+      <el-form-item :label="t('dynamicProxy.configType')" prop="type">
         <el-radio-group v-model="formData.type" @change="handleTypeChange">
           <el-radio label="exact">Exact</el-radio>
           <el-radio label="prefix">Prefix</el-radio>
@@ -23,7 +23,7 @@
         </el-radio-group>
       </el-form-item>
 
-      <el-form-item label="匹配条件" prop="from">
+      <el-form-item :label="t('dynamicProxy.matchCondition')" prop="from">
         <el-input v-model="fromUrl" @blur="handleFromBlur">
           <template #prepend>
             <el-select v-model="fromProtocol" style="width: 90px" @change="updateFromUrl">
@@ -32,12 +32,12 @@
             </el-select>
           </template>
           <template #append>
-            <span style="cursor: pointer" @click="showTest = !showTest">Test</span>
+            <span style="cursor: pointer" @click="showTest = !showTest">{{ t('dynamicProxy.test') }}</span>
           </template>
         </el-input>
       </el-form-item>
 
-      <el-form-item v-if="showTest" label="Test" prop="test">
+      <el-form-item v-if="showTest" :label="t('dynamicProxy.test')" prop="test">
         <el-input v-model="testUrl">
           <template #append>
             <el-icon @click="showTest = false" style="cursor: pointer">
@@ -50,7 +50,7 @@
         </div>
       </el-form-item>
 
-      <el-form-item label="代理目标" prop="to">
+      <el-form-item :label="t('dynamicProxy.proxyTarget')" prop="to">
         <el-input v-model="toUrl" :disabled="formData.reqHook || toProtocol === 'har'" @blur="handleToBlur">
           <template #prepend>
             <el-select v-model="toProtocol" :disabled="formData.reqHook" style="width: 90px" @change="updateToUrl">
@@ -76,8 +76,8 @@
               @change="handleSelectFolder"
             />
             <el-button-group>
-              <el-button type="text" @click="triggerFileSelect">选择文件</el-button>
-              <el-button type="text" @click="triggerFolderSelect" style="margin-left: 8px">选择文件夹</el-button>
+              <el-button type="text" @click="triggerFileSelect">{{ t('dynamicProxy.selectFile') }}</el-button>
+              <el-button type="text" @click="triggerFolderSelect" style="margin-left: 8px">{{ t('dynamicProxy.selectFolder') }}</el-button>
             </el-button-group>
           </template>
           <template #append v-if="toProtocol === 'har'">
@@ -88,27 +88,27 @@
               style="display: none"
               @change="handleSelectHarFile"
             />
-            <el-button type="text" @click="triggerHarFileSelect">上传HAR</el-button>
+            <el-button type="text" @click="triggerHarFileSelect">{{ t('dynamicProxy.uploadHar') }}</el-button>
           </template>
         </el-input>
       </el-form-item>
 
       <!-- HAR ignore parameters configuration -->
-      <el-form-item v-if="toProtocol === 'har'" label="忽略参数" prop="harIgnoreParams">
+      <el-form-item v-if="toProtocol === 'har'" :label="t('dynamicProxy.ignoreParams')" prop="harIgnoreParams">
         <el-input
           v-model="formData.harIgnoreParams"
-          placeholder="输入要忽略的参数名，多个参数用逗号分隔，如: timestamp,_t"
+          :placeholder="t('dynamicProxy.ignoreParamsPlaceholder')"
         />
         <div style="color: #909399; font-size: 12px; margin-top: 4px;">
-          匹配时会忽略这些请求参数，适用于时间戳等动态参数
+          {{ t('dynamicProxy.ignoreParamsHint') }}
         </div>
       </el-form-item>
 
       <!-- HAR original delay configuration -->
-      <el-form-item v-if="toProtocol === 'har'" label="使用原始延时" prop="useOriginalDelay">
+      <el-form-item v-if="toProtocol === 'har'" :label="t('dynamicProxy.useOriginalDelay')" prop="useOriginalDelay">
         <el-switch v-model="formData.useOriginalDelay" />
         <div style="color: #909399; font-size: 12px; margin-top: 4px;">
-          是否使用HAR文件中记录的原始请求延时
+          {{ t('dynamicProxy.useOriginalDelayHint') }}
         </div>
       </el-form-item>
 
@@ -118,30 +118,30 @@
         v-model="formData.backendProxy"
       />
 
-      <el-form-item label="延迟" prop="delay">
+      <el-form-item :label="t('dynamicProxy.delay')" prop="delay">
         <el-input-number v-model="formData.delay" :min="0" />
       </el-form-item>
 
-      <el-form-item label="修改请求参数" prop="reqHook">
+      <el-form-item :label="t('dynamicProxy.modifyRequest')" prop="reqHook">
         <el-switch v-model="formData.reqHook" />
       </el-form-item>
 
-      <el-form-item v-if="formData.reqHook" label="代码" prop="reqHookCode">
+      <el-form-item v-if="formData.reqHook" :label="t('dynamicProxy.code')" prop="reqHookCode">
         <CodeEditor v-model="formData.reqHookCode" />
       </el-form-item>
 
-      <el-form-item label="修改响应结果" prop="resHook">
+      <el-form-item :label="t('dynamicProxy.modifyResponse')" prop="resHook">
         <el-switch v-model="formData.resHook" />
       </el-form-item>
 
-      <el-form-item v-if="formData.resHook" label="代码" prop="resHookCode">
+      <el-form-item v-if="formData.resHook" :label="t('dynamicProxy.code')" prop="resHookCode">
         <CodeEditor v-model="formData.resHookCode" />
       </el-form-item>
     </el-form>
 
     <template #footer>
-      <el-button @click="handleCancel">取消</el-button>
-      <el-button type="primary" @click="handleOk">确定</el-button>
+      <el-button @click="handleCancel">{{ t('common.cancel') }}</el-button>
+      <el-button type="primary" @click="handleOk">{{ t('common.ok') }}</el-button>
     </template>
   </el-dialog>
 </template>
@@ -152,6 +152,7 @@ import { Close } from '@element-plus/icons-vue';
 import type { FormInstance, FormRules } from 'element-plus';
 import type { ProxySetting } from '../../../stores/global';
 import { DEFAULT_BACKEND_PROXY } from '../../../stores/global';
+import { useI18n } from '../../../composables/useI18n';
 import CodeEditor from './CodeEditor.vue';
 import BackendProxyConfig from './BackendProxyConfig.vue';
 
@@ -164,6 +165,8 @@ const emit = defineEmits<{
   cancel: [];
 }>();
 
+const { t } = useI18n();
+
 const visible = ref(true);
 const formRef = ref<FormInstance>();
 const showTest = ref(false);
@@ -173,13 +176,13 @@ const fileInputRef = ref<HTMLInputElement>();
 const folderInputRef = ref<HTMLInputElement>();
 const harFileInputRef = ref<HTMLInputElement>();
 
-const getInitReqChangeCode = () => `// 按需修改url、headers、body，可以返回具体的值，也可以返回一个Promise
-// 注意：body如果是json，需要先stringify
+const getInitReqChangeCode = () => `// Modify url, headers, body as needed, can return a value or a Promise
+// Note: if body is json, stringify it first
 async function reqHook({url, headers, body}) {
   return {url, headers, body};
 }`;
 
-const getInitResChangeCode = () => `// 按需修改headers、body，可以返回具体的值，也可以返回一个Promise
+const getInitResChangeCode = () => `// Modify headers, body as needed, can return a value or a Promise
 async function resHook(request, {code, headers, body}) {
   return {code, headers, body};
 }`;
@@ -263,7 +266,7 @@ const handleSelectHarFile = async (event: Event) => {
     
     // Validate HAR format
     if (!harData.log || !harData.log.entries) {
-      throw new Error('Invalid HAR file format');
+      throw new Error(t('dynamicProxy.harFormatError'));
     }
     
     // Store HAR data outside reactive system
@@ -281,7 +284,7 @@ const handleSelectHarFile = async (event: Event) => {
     target.value = '';
   } catch (error) {
     console.error('Failed to load HAR file:', error);
-    alert(error instanceof Error ? error.message : '加载HAR文件失败');
+    alert(error instanceof Error ? error.message : t('dynamicProxy.harLoadError'));
     target.value = '';
   }
 };
@@ -361,9 +364,9 @@ const validateTest = () => {
   if (testUrl.value) {
     const isMatch = testFrom(testUrl.value, formData.from, formData.type);
     if (isMatch) {
-      testResult.value = { success: true, message: '✓ 匹配成功' };
+      testResult.value = { success: true, message: t('dynamicProxy.testSuccess') };
     } else {
-      testResult.value = { success: false, message: '✗ 匹配失败' };
+      testResult.value = { success: false, message: t('dynamicProxy.testFail') };
     }
   } else {
     testResult.value = null;
@@ -378,13 +381,13 @@ const handleTypeChange = () => {
 };
 
 const rules: FormRules = {
-  from: [{ required: true, message: '必填', trigger: 'blur' }],
+  from: [{ required: true, message: t('dynamicProxy.required'), trigger: 'blur' }],
   to: [
     {
       required: true,
       validator: (rule, value, callback) => {
         if (!formData.reqHook && !value) {
-          callback(new Error('必填'));
+          callback(new Error(t('dynamicProxy.required')));
         } else {
           callback();
         }
@@ -394,7 +397,7 @@ const rules: FormRules = {
   ],
   'backendProxy.host': [
     {
-      validator: (rule, value, callback) => {
+      validator: (_rule, value, callback) => {
         // Only validate when proxy type is http or socks5 and target is http/https
         if (
           (toProtocol.value === 'http' || toProtocol.value === 'https') &&
@@ -402,7 +405,7 @@ const rules: FormRules = {
           (formData.backendProxy.type === 'http' || formData.backendProxy.type === 'socks5')
         ) {
           if (!value || value.trim() === '') {
-            callback(new Error('代理服务器地址不能为空'));
+            callback(new Error(t('dynamicProxy.backendProxyHostError')));
             return;
           }
         }
@@ -413,7 +416,7 @@ const rules: FormRules = {
   ],
   'backendProxy.port': [
     {
-      validator: (rule, value, callback) => {
+      validator: (_rule, value, callback) => {
         // Only validate when proxy type is http or socks5 and target is http/https
         if (
           (toProtocol.value === 'http' || toProtocol.value === 'https') &&
@@ -421,7 +424,7 @@ const rules: FormRules = {
           (formData.backendProxy.type === 'http' || formData.backendProxy.type === 'socks5')
         ) {
           if (!value || value < 1 || value > 65535) {
-            callback(new Error('端口号必须在 1-65535 之间'));
+            callback(new Error(t('dynamicProxy.backendProxyPortRangeError')));
             return;
           }
         }
@@ -457,12 +460,12 @@ watch(() => formData.reqHook, (val) => {
   }
 });
 
-// 监听 testUrl 变化，实时验证
+// Watch testUrl changes and validate in real-time
 watch(testUrl, () => {
   validateTest();
 });
 
-// 监听 formData.from 变化，实时验证
+// Watch formData.from changes and validate in real-time
 watch(() => formData.from, () => {
   if (testUrl.value) {
     validateTest();

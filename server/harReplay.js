@@ -338,7 +338,9 @@ async function handleHarReplay(setting, requestDetail) {
       
       // Calculate delay from HAR timing
       let delay = 0;
-      if (matchedEntry.time && matchedEntry.time > 0) {
+      // Check if useOriginalDelay is enabled (default to true if not specified)
+      const useOriginalDelay = setting.useOriginalDelay !== false;
+      if (useOriginalDelay && matchedEntry.time && matchedEntry.time > 0) {
         delay = matchedEntry.time;
       }
       

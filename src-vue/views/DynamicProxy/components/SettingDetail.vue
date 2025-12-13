@@ -104,6 +104,14 @@
         </div>
       </el-form-item>
 
+      <!-- HAR original delay configuration -->
+      <el-form-item v-if="toProtocol === 'har'" label="使用原始延时" prop="useOriginalDelay">
+        <el-switch v-model="formData.useOriginalDelay" />
+        <div style="color: #909399; font-size: 12px; margin-top: 4px;">
+          是否使用HAR文件中记录的原始请求延时
+        </div>
+      </el-form-item>
+
       <!-- Backend proxy configuration - only show for http/https targets -->
       <BackendProxyConfig
         v-if="(toProtocol === 'http' || toProtocol === 'https') && formData.backendProxy"
@@ -190,6 +198,7 @@ const formData = reactive<ProxySetting>({
   backendProxy: props.setting.backendProxy || { ...DEFAULT_BACKEND_PROXY },
   harFileName: props.setting.harFileName || '',
   harIgnoreParams: props.setting.harIgnoreParams || '',
+  useOriginalDelay: props.setting.useOriginalDelay !== false, // Default to true
 });
 
 // Store HAR data outside of reactive system to avoid performance issues

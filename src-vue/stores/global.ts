@@ -34,6 +34,7 @@ export interface ProxySetting {
   backendProxy?: BackendProxyConfig; // Optional backend proxy configuration
   harFileName?: string; // HAR file name for display (frontend only, not stored in backend)
   harIgnoreParams?: string; // Comma-separated list of parameters to ignore when matching
+  useOriginalDelay?: boolean; // Use original delay from HAR file (default: true)
 }
 
 export interface WhitelistItem {

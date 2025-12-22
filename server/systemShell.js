@@ -15,17 +15,51 @@ function exec(cmd) {
   });
 }
 
-exports.setProxy = (port) => {
-  exec(`networksetup -setwebproxy Wi-Fi 127.0.0.1 ${port}`);
-  exec(`networksetup -setsecurewebproxy Wi-Fi 127.0.0.1 ${port}`);
-  exec(`networksetup -setproxybypassdomains "Wi-Fi" 127.0.0.2`);
+// Get all active network services
+function getActiveNetworkServices() {
+  return new Promise((resolve) => {
+    process.exec('networksetup -listallnetworkservices', (error, stdout) => {
+      if (error) {
+        console.error('Failed to get network services:', error);
+        resolve(['Wi-Fi', 'Ethernet']); // Fallback to common services
+        return;
+      }
+      
+      // Parse output and filter out the header line
+      const services = stdout
+        .split('\n')
+        .filter(line => line && !line.startsWith('An asterisk') && line.trim())
+        .map(line => line.trim());
+      
+      resolve(services.length > 0 ? services : ['Wi-Fi', 'Ethernet']);
+    });
+  });
+}
+
+exports.getActiveNetworkServices = getActiveNetworkServices;
+
+exports.setProxy = async (port) => {
+  const services = await getActiveNetworkServices();
+  
+  // Apply proxy settings to all network services
+  services.forEach(service => {
+    exec(`networksetup -setwebproxy "${service}" 127.0.0.1 ${port}`);
+    exec(`networksetup -setsecurewebproxy "${service}" 127.0.0.1 ${port}`);
+  });
+  
+  // Note: Do not update bypass list here on startup
+  // Bypass list is synced with system in syncWithSystem()
+  // and only updated when user makes changes
 };
 
-exports.deleteProxy = () => {
-  exec('networksetup -setwebproxystate Wi-Fi off');
-  exec('networksetup -setsecurewebproxystate Wi-Fi off');
-  /* exec('networksetup -setsocksfirewallproxystate Wi-Fi off');
-  exec('networksetup -setautoproxystate Wi-Fi off'); */
+exports.deleteProxy = async () => {
+  const services = await getActiveNetworkServices();
+  
+  // Disable proxy for all network services
+  services.forEach(service => {
+    exec(`networksetup -setwebproxystate "${service}" off`);
+    exec(`networksetup -setsecurewebproxystate "${service}" off`);
+  });
 };
 
 exports.startClient = (port) => {

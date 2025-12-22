@@ -1,0 +1,480 @@
+<template>
+  <el-dialog
+    v-model="visible"
+    :title="setting.id ? t('common.edit') : t('common.add')"
+    width="900px"
+    @close="handleCancel"
+  >
+    <el-form
+      ref="formRef"
+      :model="formData"
+      :rules="rules"
+      label-width="120px"
+    >
+      <el-form-item :label="t('common.enabled')" prop="enabled">
+        <el-switch v-model="formData.enabled" />
+      </el-form-item>
+
+      <el-form-item :label="t('dynamicProxy.configType')" prop="type">
+        <el-radio-group v-model="formData.type" @change="handleTypeChange">
+          <el-radio label="exact">Exact</el-radio>
+          <el-radio label="prefix">Prefix</el-radio>
+          <el-radio label="regex">Regex</el-radio>
+        </el-radio-group>
+      </el-form-item>
+
+      <el-form-item :label="t('dynamicProxy.matchCondition')" prop="from">
+        <el-input v-model="fromUrl" @blur="handleFromBlur">
+          <template #prepend>
+            <el-select v-model="fromProtocol" style="width: 90px" @change="updateFromUrl">
+              <el-option label="http://" value="http" />
+              <el-option label="https://" value="https" />
+            </el-select>
+          </template>
+          <template #append>
+            <span style="cursor: pointer" @click="showTest = !showTest">{{ t('dynamicProxy.test') }}</span>
+          </template>
+        </el-input>
+      </el-form-item>
+
+      <el-form-item v-if="showTest" :label="t('dynamicProxy.test')" prop="test">
+        <el-input v-model="testUrl">
+          <template #append>
+            <el-icon @click="showTest = false" style="cursor: pointer">
+              <Close />
+            </el-icon>
+          </template>
+        </el-input>
+        <div v-if="testResult" :style="{ color: testResult.success ? '#67c23a' : '#f56c6c', marginTop: '4px', fontSize: '12px' }">
+          {{ testResult.message }}
+        </div>
+      </el-form-item>
+
+      <el-form-item :label="t('dynamicProxy.proxyTarget')" prop="to">
+        <el-input v-model="toUrl" :disabled="formData.reqHook || toProtocol === 'har'" @blur="handleToBlur">
+          <template #prepend>
+            <el-select v-model="toProtocol" :disabled="formData.reqHook" style="width: 90px" @change="updateToUrl">
+              <el-option label="http://" value="http" />
+              <el-option label="https://" value="https" />
+              <el-option label="file://" value="file" />
+              <el-option label="har://" value="har" />
+            </el-select>
+          </template>
+          <template #append v-if="toProtocol === 'file'">
+            <input
+              ref="fileInputRef"
+              type="file"
+              style="display: none"
+              @change="handleSelectFile"
+            />
+            <input
+              ref="folderInputRef"
+              type="file"
+              webkitdirectory
+              directory
+              style="display: none"
+              @change="handleSelectFolder"
+            />
+            <el-button-group>
+              <el-button type="text" @click="triggerFileSelect">{{ t('dynamicProxy.selectFile') }}</el-button>
+              <el-button type="text" @click="triggerFolderSelect" style="margin-left: 8px">{{ t('dynamicProxy.selectFolder') }}</el-button>
+            </el-button-group>
+          </template>
+          <template #append v-if="toProtocol === 'har'">
+            <input
+              ref="harFileInputRef"
+              type="file"
+              accept=".har"
+              style="display: none"
+              @change="handleSelectHarFile"
+            />
+            <el-button type="text" @click="triggerHarFileSelect">{{ t('dynamicProxy.uploadHar') }}</el-button>
+          </template>
+        </el-input>
+      </el-form-item>
+
+      <!-- HAR ignore parameters configuration -->
+      <el-form-item v-if="toProtocol === 'har'" :label="t('dynamicProxy.ignoreParams')" prop="harIgnoreParams">
+        <el-input
+          v-model="formData.harIgnoreParams"
+          :placeholder="t('dynamicProxy.ignoreParamsPlaceholder')"
+        />
+        <div style="color: #909399; font-size: 12px; margin-top: 4px;">
+          {{ t('dynamicProxy.ignoreParamsHint') }}
+        </div>
+      </el-form-item>
+
+      <!-- HAR original delay configuration -->
+      <el-form-item v-if="toProtocol === 'har'" :label="t('dynamicProxy.useOriginalDelay')" prop="useOriginalDelay">
+        <el-switch v-model="formData.useOriginalDelay" />
+        <div style="color: #909399; font-size: 12px; margin-top: 4px;">
+          {{ t('dynamicProxy.useOriginalDelayHint') }}
+        </div>
+      </el-form-item>
+
+      <!-- Backend proxy configuration - only show for http/https targets -->
+      <BackendProxyConfig
+        v-if="(toProtocol === 'http' || toProtocol === 'https') && formData.backendProxy"
+        v-model="formData.backendProxy"
+      />
+
+      <el-form-item :label="t('dynamicProxy.delay')" prop="delay">
+        <el-input-number v-model="formData.delay" :min="0" />
+      </el-form-item>
+
+      <el-form-item :label="t('dynamicProxy.modifyRequest')" prop="reqHook">
+        <el-switch v-model="formData.reqHook" />
+      </el-form-item>
+
+      <el-form-item v-if="formData.reqHook" :label="t('dynamicProxy.code')" prop="reqHookCode">
+        <CodeEditor v-model="formData.reqHookCode" />
+      </el-form-item>
+
+      <el-form-item :label="t('dynamicProxy.modifyResponse')" prop="resHook">
+        <el-switch v-model="formData.resHook" />
+      </el-form-item>
+
+      <el-form-item v-if="formData.resHook" :label="t('dynamicProxy.code')" prop="resHookCode">
+        <CodeEditor v-model="formData.resHookCode" />
+      </el-form-item>
+    </el-form>
+
+    <template #footer>
+      <el-button @click="handleCancel">{{ t('common.cancel') }}</el-button>
+      <el-button type="primary" @click="handleOk">{{ t('common.ok') }}</el-button>
+    </template>
+  </el-dialog>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, watch } from 'vue';
+import { Close } from '@element-plus/icons-vue';
+import type { FormInstance, FormRules } from 'element-plus';
+import type { ProxySetting } from '../../../stores/global';
+import { DEFAULT_BACKEND_PROXY } from '../../../stores/global';
+import { useI18n } from '../../../composables/useI18n';
+import CodeEditor from './CodeEditor.vue';
+import BackendProxyConfig from './BackendProxyConfig.vue';
+
+const props = defineProps<{
+  setting: ProxySetting;
+}>();
+
+const emit = defineEmits<{
+  ok: [setting: ProxySetting];
+  cancel: [];
+}>();
+
+const { t } = useI18n();
+
+const visible = ref(true);
+const formRef = ref<FormInstance>();
+const showTest = ref(false);
+const testUrl = ref('');
+const testResult = ref<{ success: boolean; message: string } | null>(null);
+const fileInputRef = ref<HTMLInputElement>();
+const folderInputRef = ref<HTMLInputElement>();
+const harFileInputRef = ref<HTMLInputElement>();
+
+const getInitReqChangeCode = () => `// Modify url, headers, body as needed, can return a value or a Promise
+// Note: if body is json, stringify it first
+async function reqHook({url, headers, body}) {
+  return {url, headers, body};
+}`;
+
+const getInitResChangeCode = () => `// Modify headers, body as needed, can return a value or a Promise
+async function resHook(request, {code, headers, body}) {
+  return {code, headers, body};
+}`;
+
+const formData = reactive<ProxySetting>({
+  id: props.setting.id,
+  enabled: props.setting.enabled !== false,
+  type: props.setting.type || 'exact',
+  from: props.setting.from || 'http://',
+  to: props.setting.to || 'http://',
+  reqHook: props.setting.reqHook || false,
+  reqHookCode: props.setting.reqHookCode || getInitReqChangeCode(),
+  resHook: props.setting.resHook || false,
+  resHookCode: props.setting.resHookCode || getInitResChangeCode(),
+  delay: props.setting.delay || 0,
+  backendProxy: props.setting.backendProxy || { ...DEFAULT_BACKEND_PROXY },
+  harFileName: props.setting.harFileName || '',
+  harIgnoreParams: props.setting.harIgnoreParams || '',
+  useOriginalDelay: props.setting.useOriginalDelay !== false, // Default to true
+});
+
+// Store HAR data outside of reactive system to avoid performance issues
+let harDataRef: any = null;
+
+const removeProtocol = (url: string) => url.replace(/^.*?:\/\//, '');
+const getProtocol = (url: string) => url.replace(/(.*?):.*/, '$1');
+const hasProtocol = (url: string) => ['http', 'https', 'file', 'har'].includes(getProtocol(url));
+
+const fromProtocol = ref(getProtocol(formData.from));
+const fromUrl = ref(removeProtocol(formData.from));
+const toProtocol = ref(getProtocol(formData.to));
+const toUrl = ref(removeProtocol(formData.to));
+
+const updateFromUrl = () => {
+  formData.from = `${fromProtocol.value}://${fromUrl.value}`;
+};
+
+const updateToUrl = () => {
+  formData.to = `${toProtocol.value}://${toUrl.value}`;
+};
+
+const handleFromBlur = () => {
+  if (hasProtocol(fromUrl.value)) {
+    fromProtocol.value = getProtocol(fromUrl.value);
+    fromUrl.value = removeProtocol(fromUrl.value);
+  }
+  updateFromUrl();
+};
+
+const handleToBlur = () => {
+  if (hasProtocol(toUrl.value)) {
+    toProtocol.value = getProtocol(toUrl.value);
+    toUrl.value = removeProtocol(toUrl.value);
+  }
+  updateToUrl();
+};
+
+const triggerFileSelect = () => {
+  fileInputRef.value?.click();
+};
+
+const triggerFolderSelect = () => {
+  folderInputRef.value?.click();
+};
+
+const triggerHarFileSelect = () => {
+  harFileInputRef.value?.click();
+};
+
+const handleSelectHarFile = async (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+  
+  if (!file) {
+    return;
+  }
+
+  try {
+    const content = await file.text();
+    const harData = JSON.parse(content);
+    
+    // Validate HAR format
+    if (!harData.log || !harData.log.entries) {
+      throw new Error(t('dynamicProxy.harFormatError'));
+    }
+    
+    // Store HAR data outside reactive system
+    harDataRef = harData;
+    
+    // Store file name in reactive formData
+    formData.harFileName = file.name;
+    
+    // Use full path if available (Electron environment), otherwise use file name
+    const filePath = (file as any).path || file.name;
+    toUrl.value = filePath;
+    updateToUrl();
+    
+    // Reset file input
+    target.value = '';
+  } catch (error) {
+    console.error('Failed to load HAR file:', error);
+    alert(error instanceof Error ? error.message : t('dynamicProxy.harLoadError'));
+    target.value = '';
+  }
+};
+
+const handleSelectFile = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const files = target.files;
+  
+  if (files && files.length > 0) {
+    const file = files[0] as any;
+    if (file.path) {
+      toUrl.value = file.path;
+      updateToUrl();
+    }
+  }
+  
+  // Reset input to allow selecting the same file again
+  target.value = '';
+};
+
+const handleSelectFolder = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const files = target.files;
+  
+  if (files && files.length > 0) {
+    const file = files[0] as any;
+    if (file.path) {
+      let folderPath = file.path;
+      
+      // Extract folder path from the first file's path
+      if (file.webkitRelativePath) {
+        // webkitRelativePath format: folderName/subfolder/file.txt
+        // file.path format: /absolute/path/to/folderName/subfolder/file.txt
+        // We need to remove the relative path part to get the folder path
+        const relativePath = file.webkitRelativePath;
+        
+        // Remove the relative path from the end of the absolute path
+        if (folderPath.endsWith(relativePath)) {
+          folderPath = folderPath.substring(0, folderPath.length - relativePath.length);
+        }
+        
+        // Add back the folder name (first part of relative path)
+        const folderName = relativePath.split('/')[0];
+        folderPath = folderPath + folderName;
+      } else {
+        // Fallback: remove the file name to get folder path
+        folderPath = folderPath.substring(0, folderPath.lastIndexOf('/'));
+      }
+      
+      // Ensure folder path ends with /
+      if (!folderPath.endsWith('/')) {
+        folderPath += '/';
+      }
+      
+      toUrl.value = folderPath;
+      updateToUrl();
+    }
+  }
+  
+  // Reset input to allow selecting the same folder again
+  target.value = '';
+};
+
+const testFrom = (testUrl: string, fromUrl: string, nowType: string) => {
+  switch (nowType) {
+    case 'regex':
+      return new RegExp(fromUrl).test(testUrl);
+    case 'prefix':
+      return testUrl.startsWith(fromUrl);
+    case 'exact':
+    default:
+      return testUrl === fromUrl;
+  }
+};
+
+const validateTest = () => {
+  if (testUrl.value) {
+    const isMatch = testFrom(testUrl.value, formData.from, formData.type);
+    if (isMatch) {
+      testResult.value = { success: true, message: t('dynamicProxy.testSuccess') };
+    } else {
+      testResult.value = { success: false, message: t('dynamicProxy.testFail') };
+    }
+  } else {
+    testResult.value = null;
+  }
+};
+
+const handleTypeChange = () => {
+  testResult.value = null;
+  if (testUrl.value) {
+    validateTest();
+  }
+};
+
+const rules: FormRules = {
+  from: [{ required: true, message: t('dynamicProxy.required'), trigger: 'blur' }],
+  to: [
+    {
+      required: true,
+      validator: (rule, value, callback) => {
+        if (!formData.reqHook && !value) {
+          callback(new Error(t('dynamicProxy.required')));
+        } else {
+          callback();
+        }
+      },
+      trigger: 'blur',
+    },
+  ],
+  'backendProxy.host': [
+    {
+      validator: (_rule, value, callback) => {
+        // Only validate when proxy type is http or socks5 and target is http/https
+        if (
+          (toProtocol.value === 'http' || toProtocol.value === 'https') &&
+          formData.backendProxy &&
+          (formData.backendProxy.type === 'http' || formData.backendProxy.type === 'socks5')
+        ) {
+          if (!value || value.trim() === '') {
+            callback(new Error(t('dynamicProxy.backendProxyHostError')));
+            return;
+          }
+        }
+        callback();
+      },
+      trigger: 'blur',
+    },
+  ],
+  'backendProxy.port': [
+    {
+      validator: (_rule, value, callback) => {
+        // Only validate when proxy type is http or socks5 and target is http/https
+        if (
+          (toProtocol.value === 'http' || toProtocol.value === 'https') &&
+          formData.backendProxy &&
+          (formData.backendProxy.type === 'http' || formData.backendProxy.type === 'socks5')
+        ) {
+          if (!value || value < 1 || value > 65535) {
+            callback(new Error(t('dynamicProxy.backendProxyPortRangeError')));
+            return;
+          }
+        }
+        callback();
+      },
+      trigger: 'blur',
+    },
+  ],
+};
+
+const handleOk = async () => {
+  if (!formRef.value) return;
+  
+  await formRef.value.validate((valid) => {
+    if (valid) {
+      // Attach HAR data only when submitting
+      const settingToSave: any = { ...formData };
+      if (harDataRef) {
+        settingToSave.harData = harDataRef;
+      }
+      emit('ok', settingToSave);
+    }
+  });
+};
+
+const handleCancel = () => {
+  emit('cancel');
+};
+
+watch(() => formData.reqHook, (val) => {
+  if (val) {
+    formRef.value?.clearValidate('to');
+  }
+});
+
+// Watch testUrl changes and validate in real-time
+watch(testUrl, () => {
+  validateTest();
+});
+
+// Watch formData.from changes and validate in real-time
+watch(() => formData.from, () => {
+  if (testUrl.value) {
+    validateTest();
+  }
+});
+</script>
+
+<style scoped>
+:deep(.el-form-item__content) {
+  line-height: normal;
+}
+</style>

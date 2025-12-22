@@ -1,8 +1,21 @@
 const AnyProxy = require('anyproxy');
 const rule = require('./rule');
 const systemShell = require('./systemShell');
+const bypassList = require('./bypassList');
+const certManager = require('./certManager');
 
-exports.start = function(port) {
+let proxyServer = null;
+
+exports.start = async function(port) {
+  // Ensure certificate exists before starting proxy
+  const certReady = await certManager.ensureCertificate();
+  if (!certReady) {
+    throw new Error('Failed to initialize certificate for HTTPS proxy');
+  }
+  
+  // Sync bypass list with system before starting
+  await bypassList.syncWithSystem();
+  
   const options = {
     port,
     rule,
@@ -13,21 +26,25 @@ exports.start = function(port) {
     throttle: 10000,
     forceProxyHttps: true,
     wsIntercept: false, // 不开启websocket代理
-    silent: false
+    silent: true  // Disable AnyProxy native logs
   };
-  const proxyServer = new AnyProxy.ProxyServer(options);
+  proxyServer = new AnyProxy.ProxyServer(options);
   
   proxyServer.on('ready', () => { /* */ });
   proxyServer.on('error', () => { /* */ });
   proxyServer.start();
 
   // AnyProxy.utils.systemProxyMgr.enableGlobalProxy('127.0.0.1', port);
-  systemShell.setProxy(port);
+  await systemShell.setProxy(port);
 };
 
-exports.end = function() {
-  // 用AnyProxy无法关闭https的代理
-  // AnyProxy.utils.systemProxyMgr.disableGlobalProxy();
-  systemShell.deleteProxy();
-  proxyServer.close();
+exports.end = async function() {
+  // Clean up system proxy first
+  await systemShell.deleteProxy();
+  
+  // Then close proxy server
+  if (proxyServer) {
+    proxyServer.close();
+    proxyServer = null;
+  }
 }

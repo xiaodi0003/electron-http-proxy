@@ -298,6 +298,8 @@ async function doResHook(setting, req, res) {
 function handleDirectConnection(target, requestDetail) {
   const newRequestOptions = requestDetail.requestOptions;
   requestDetail.protocol = getProtocol(target);
+  // requestDetail.url = traget;
+  // newRequestOptions.url = target;
   newRequestOptions.hostname = getDomain(target);
   newRequestOptions.port = getPort(target);
   newRequestOptions.path = getPath(target);

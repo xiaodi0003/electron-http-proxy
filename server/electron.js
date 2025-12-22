@@ -121,10 +121,44 @@ function createMenu() {
   Menu.setApplicationMenu(menu);
 }
 
+// Clean harData from proxySettings store if exists
+function cleanHarDataFromStore() {
+  try {
+    const Store = require('electron-store');
+    const store = new Store();
+    const proxySettings = store.get('proxySettings');
+    
+    if (!proxySettings || !Array.isArray(proxySettings)) {
+      return;
+    }
+    
+    let hasHarData = false;
+    
+    // Check and remove harData from settings
+    proxySettings.forEach((setting) => {
+      if (setting.harData) {
+        hasHarData = true;
+        console.log(`Cleaning harData from setting: ${setting.id}`);
+        delete setting.harData;
+      }
+    });
+    
+    if (hasHarData) {
+      store.set('proxySettings', proxySettings);
+      console.log('✓ Successfully cleaned harData from proxySettings store');
+    }
+  } catch (error) {
+    console.error('Error cleaning harData:', error);
+  }
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(async () => {
+  // Clean harData from store on startup
+  // cleanHarDataFromStore();
+  
   // 创建菜单
   // createMenu();
   

@@ -12,7 +12,8 @@ function attachHarData(setting) {
   if (setting && setting.to && setting.to.startsWith('har://')) {
     const harData = pSettings.getHarData(setting.id);
     if (harData) {
-      setting.harData = harData;
+      // Return a new object with harData attached, don't modify original
+      return { ...setting, harData };
     }
   }
   return setting;
@@ -157,10 +158,11 @@ pSettings.onSettingsChange(() => {
 
 exports.proxyReq = async function(requestDetail) {
   discernLocalhost(requestDetail);
-  const setting = getEnabledSettings().find(s => findSetting(s, requestDetail));
+  let setting = getEnabledSettings().find(s => findSetting(s, requestDetail));
   if (setting) {
     // Attach HAR data only when needed (for har:// protocol)
-    attachHarData(setting);
+    // attachHarData returns a new object if harData is attached
+    setting = attachHarData(setting);
     requestDetail._req.proxySetting = setting;
     await sleep(setting);
     
